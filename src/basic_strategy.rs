@@ -65,20 +65,50 @@ static DEFAULT_HARD_DEVIATIONS: [[u8; 40]; 17] = [
     *b"                                        ", // 19
     *b"                                        ", // 18
     *b"                                        ", // 17
-    *b"                                 +4=>+1=", // 16
-    *b"                                     +4=", // 15
+    *b"                            >+5=>+4=    ", // 16
+    *b"                        >+6=>+7=>+6=>+4=", // 15
     *b"                                        ", // 14
-    *b"                                        ", // 13
-    *b"                                        ", // 12
+    *b"        <-3+                            ", // 13
+    *b"    >+6=>+3=                            ", // 12
     //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-    *b"                                        ", // 11
-    *b"                                        ", // 10
-    *b"                         +3D            ", // 9
-    *b"                     +2D                ", // 8
+    *b">+2D                                    ", // 11
+    *b">+5D                                >+6D", // 10
+    *b"                            >+8D        ", // 9
+    *b"                                        ", // 8
     *b"                                        ", // 7
     *b"                                        ", // 6
     *b"                                        ", // 5
     *b"                                        ", // 4
+    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+];
+
+static DEFAULT_SOFT_DEVIATIONS: [[u8; 40]; 10] = [
+    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+    *b"                                        ", // A10
+    *b"                                        ", // A9
+    *b"                >+2D                    ", // A8
+    *b"                                        ", // A7
+    *b"                                        ", // A6
+    *b"                                        ", // A5
+    *b"                                        ", // A4
+    *b"                                        ", // A3
+    *b"                                        ", // A2
+    *b"                                        ", // AA
+    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+];
+
+static DEFAULT_PAIR_DEVIATIONS: [[u8; 40]; 10] = [
+    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+    *b"            >+7V>+5V>+4V                ", // T/T
+    *b"                                        ", // 9/9
+    *b"                                        ", // 8/8
+    *b"                                        ", // 7/7
+    *b"                                        ", // 6/6
+    *b"                                        ", // 5/5
+    *b"                                        ", // 4/4
+    *b"                                        ", // 3/3
+    *b"                                        ", // 2/2
+    *b"                                        ", // A/A
     //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 ];
 
@@ -103,6 +133,8 @@ impl BasicStrategy {
 
     pub fn set_default_deviations(&mut self) {
         self.dev_hard_table = Box::new(DEFAULT_HARD_DEVIATIONS);
+        self.dev_soft_table = Box::new(DEFAULT_SOFT_DEVIATIONS);
+        self.dev_pair_table = Box::new(DEFAULT_PAIR_DEVIATIONS);
         self.deviations = true;
     }
 
