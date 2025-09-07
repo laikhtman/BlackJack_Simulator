@@ -1,8 +1,8 @@
-use std::collections::BTreeMap;
-use serde::{Serialize, Serializer};
-use serde::ser::SerializeMap;
 use freebj::game_rules::GameRules;
 use freebj::simulator::SimulationResult;
+use serde::ser::SerializeMap;
+use serde::{Serialize, Serializer};
+use std::collections::BTreeMap;
 
 pub struct ProgramResult<'a> {
     pub rounds: u64,
@@ -15,16 +15,16 @@ struct WinningDistrib<'a> {
 }
 
 impl<'a> WinningDistrib<'a> {
-    pub fn new(distrib: &'a BTreeMap<i32, u64>) -> WinningDistrib {
-        WinningDistrib {
-            distrib,
-        }
+    pub fn new(distrib: &'a BTreeMap<i32, u64>) -> Self {
+        Self { distrib }
     }
 }
 
 impl Serialize for WinningDistrib<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer {
+    where
+        S: Serializer,
+    {
         let mut map = serializer.serialize_map(None)?;
 
         for (&k, v) in self.distrib.iter() {
@@ -37,7 +37,9 @@ impl Serialize for WinningDistrib<'_> {
 
 impl Serialize for ProgramResult<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer {
+    where
+        S: Serializer,
+    {
         let mut map = serializer.serialize_map(None)?;
 
         map.serialize_entry("rounds", &self.rounds)?;

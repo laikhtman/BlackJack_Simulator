@@ -1,14 +1,13 @@
 use std::collections::VecDeque;
 
-use crate::game_rules::GameRules;
-use crate::strategy::{Strategy, Decision};
-use crate::shoe::CardShoe;
-use crate::round::Round;
 use crate::betting::BettingStrategy;
 use crate::card::Card;
+use crate::game_rules::GameRules;
+use crate::round::Round;
+use crate::shoe::CardShoe;
+use crate::strategy::{Decision, Strategy};
 
-pub struct RoundFactory<'a>
-{
+pub struct RoundFactory<'a> {
     rules: &'a GameRules,
     strategy: &'a (dyn Strategy + Sync),
     betting_strategy: &'a (dyn BettingStrategy + Sync),
@@ -20,17 +19,18 @@ pub struct RoundFactory<'a>
     dealer_cards: VecDeque<Card>,
 }
 
-impl<'a> RoundFactory<'a>
-{
-    pub fn new(rules: &'a GameRules,
-               strategy: &'a (dyn Strategy + Sync),
-               betting_strategy: &'a (dyn BettingStrategy + Sync),
-               num_players: u8,
-               holecarding: bool,
-               override_action: Option<Decision>,
-               surrender_override: Option<bool>,
-               start_cards: VecDeque<Card>,
-               dealer_cards: VecDeque<Card>) -> RoundFactory<'a> {
+impl<'a> RoundFactory<'a> {
+    pub fn new(
+        rules: &'a GameRules,
+        strategy: &'a (dyn Strategy + Sync),
+        betting_strategy: &'a (dyn BettingStrategy + Sync),
+        num_players: u8,
+        holecarding: bool,
+        override_action: Option<Decision>,
+        surrender_override: Option<bool>,
+        start_cards: VecDeque<Card>,
+        dealer_cards: VecDeque<Card>,
+    ) -> RoundFactory<'a> {
         RoundFactory {
             rules,
             strategy,
@@ -44,7 +44,7 @@ impl<'a> RoundFactory<'a>
         }
     }
 
-    pub fn make(&self, shoe: &'a mut dyn CardShoe) -> Round {
+    pub fn make(&self, shoe: &'a mut dyn CardShoe) -> Round<'_> {
         Round::new(
             self.rules,
             self.strategy,

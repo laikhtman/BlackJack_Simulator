@@ -1,5 +1,5 @@
-use std::fmt;
 use std::collections::VecDeque;
+use std::fmt;
 
 use crate::card::Card;
 use crate::shoe::CardShoe;
@@ -11,16 +11,19 @@ pub struct QueuedShoe {
 impl QueuedShoe {
     pub fn new(cards: &[Card]) -> QueuedShoe {
         QueuedShoe {
-            cards: cards.into_iter().map(|c| *c).collect(),
+            cards: cards.iter().copied().collect(),
         }
     }
 
     pub fn from_ints(cards: &[u8]) -> QueuedShoe {
         QueuedShoe {
-            cards: cards.into_iter().map(|&c| {
-                assert!(c > 0 && c < 11);
-                Card(c)
-            }).collect()
+            cards: cards
+                .iter()
+                .map(|&c| {
+                    assert!(c > 0 && c < 11);
+                    Card(c)
+                })
+                .collect(),
         }
     }
 
@@ -50,7 +53,9 @@ impl CardShoe for QueuedShoe {
     }
 
     fn try_pick_first(&mut self, card: Card) -> Option<Card> {
-        self.cards.iter().position(|c| *c == card)
+        self.cards
+            .iter()
+            .position(|c| *c == card)
             .map(|i| self.cards.remove(i).unwrap())
     }
 
@@ -77,8 +82,8 @@ impl CardShoe for QueuedShoe {
 
 #[cfg(test)]
 mod tests {
-    use crate::shoe::queued_shoe::QueuedShoe;
     use crate::card::Card;
+    use crate::shoe::queued_shoe::QueuedShoe;
     use crate::shoe::CardShoe;
 
     #[test]
@@ -93,7 +98,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected="No cards left")]
+    #[should_panic(expected = "No cards left")]
     fn it_panics_when_picking_too_many_cards() {
         let mut shoe = QueuedShoe::from_ints(&[5, 6, 8][..]);
 

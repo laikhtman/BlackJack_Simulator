@@ -1,5 +1,5 @@
+use std::convert::TryFrom;
 use std::fmt;
-use bitflags::_core::convert::TryFrom;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub struct Card(pub u8);
@@ -22,7 +22,7 @@ impl TryFrom<&str> for Card {
             Ok(Card(1))
         } else {
             let n: u8 = value.parse().map_err(|_| "Invalid card")?;
-            if n < 2 || n > 10 {
+            if !(2..=10).contains(&n) {
                 Err("Invalid card")
             } else {
                 Ok(Card(n))

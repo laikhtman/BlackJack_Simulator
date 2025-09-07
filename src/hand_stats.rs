@@ -1,44 +1,44 @@
-use std::ops::{Add, AddAssign};
-use serde::Serialize;
 use crate::hand::Hand;
 use crate::hand_logic::HandOutcome;
+use serde::Serialize;
+use std::ops::{Add, AddAssign};
 
 #[derive(Debug, PartialEq, Serialize)]
 pub struct HandStats {
     /// Total number of hands a player played, this includes split hands,
     /// surrendered hands, and naturals.
-    pub total:      u64,
+    pub total: u64,
 
     /// Total number of hands the player won, which includes naturals, busted
     /// dealer, and won insured hands that lost their insurance.
-    pub won:        u64,
+    pub won: u64,
 
     /// Total number of hands not won and not pushed, which includes surrendered
     /// hands and lost insured hands that won their insurance.
-    pub lost:       u64,
+    pub lost: u64,
 
     /// Total number of pushed hands, which includes an insured natural against
     /// a natural.
-    pub push:       u64,
+    pub push: u64,
 
     /// Total number of player hands that busted.
-    pub busted:     u64,
+    pub busted: u64,
 
     /// Total number of natural the player received.
-    pub blackjack:  u64,
+    pub blackjack: u64,
 
     /// The total number of hands the player doubled down.
-    pub doubled:    u64,
+    pub doubled: u64,
 
     /// The total number of times the player split a hand, this is not the total
     /// number of hands got from splitting.
-    pub split:      u64,
+    pub split: u64,
 
     /// The number of hands the player insured.
-    pub insured:    u64,
+    pub insured: u64,
 
     /// The number of hands the player surrendered.
-    pub surrender:  u64,
+    pub surrender: u64,
 }
 
 impl Default for HandStats {
@@ -161,35 +161,47 @@ impl AddAssign for HandStats {
 
 #[cfg(test)]
 mod tests {
-    use crate::hand_stats::HandStats;
     use crate::hand::Hand;
     use crate::hand_logic::hand_result;
+    use crate::hand_stats::HandStats;
 
     #[test]
     fn it_update_hand_stats() {
-        //               Tt Wo Lo Pu Bu BJ Db Sp In Su
-        test_hand_stats(&[10, 8], &[10, 7], 0,
-                        (1, 1, 0, 0, 0, 0, 0, 0, 0, 0));
-        test_hand_stats(&[10, 8], &[1, 7], INSURED,
-                        (1, 0, 0, 1, 0, 0, 0, 0, 1, 0));
+        test_hand_stats(&[10, 8], &[10, 7], 0, (1, 1, 0, 0, 0, 0, 0, 0, 0, 0));
+        test_hand_stats(
+            &[10, 8],
+            &[1, 7],
+            INSURED,
+            (1, 0, 0, 1, 0, 0, 0, 0, 1, 0),
+        );
     }
 
-    const DOUBLED: u32      = 1 << 0;
-    const SURRENDERED: u32  = 1 << 1;
-    const INSURED: u32      = 1 << 2;
-    const SPLIT: u32        = 1 << 3;
+    const DOUBLED: u32 = 1 << 0;
+    const SURRENDERED: u32 = 1 << 1;
+    const INSURED: u32 = 1 << 2;
+    const SPLIT: u32 = 1 << 3;
 
-    fn test_hand_stats(player: &[u8],
-                       dealer: &[u8],
-                       opts: u32,
-                       values: (u64, u64, u64, u64, u64, u64, u64, u64, u64, u64)) {
+    fn test_hand_stats(
+        player: &[u8],
+        dealer: &[u8],
+        opts: u32,
+        values: (u64, u64, u64, u64, u64, u64, u64, u64, u64, u64),
+    ) {
         let mut stats = HandStats::default();
 
         let mut player = Hand::from(player);
-        if opts & DOUBLED > 0 { player.double_down(); }
-        if opts & SURRENDERED > 0 { player.surrender(); }
-        if opts & INSURED > 0 { player.insure(); }
-        if opts & SPLIT > 0 { player.split(); }
+        if opts & DOUBLED > 0 {
+            player.double_down();
+        }
+        if opts & SURRENDERED > 0 {
+            player.surrender();
+        }
+        if opts & INSURED > 0 {
+            player.insure();
+        }
+        if opts & SPLIT > 0 {
+            player.split();
+        }
 
         let dealer = Hand::from(dealer);
 

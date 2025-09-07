@@ -5,7 +5,9 @@ pub trait BettingStrategy {
 pub struct FixedBet(pub f64);
 
 impl BettingStrategy for FixedBet {
-    fn place_bet(&self, _true_count: f32) -> f64 { self.0 }
+    fn place_bet(&self, _true_count: f32) -> f64 {
+        self.0
+    }
 }
 
 pub struct HiloBetting {
@@ -17,11 +19,13 @@ pub struct HiloBetting {
 }
 
 impl HiloBetting {
-    pub fn new(base: f64,
-               per_tc: f64,
-               neg_null_bet: Option<f64>,
-               max_tc: Option<f32>,
-               wongout_under: Option<f32>) -> HiloBetting {
+    pub fn new(
+        base: f64,
+        per_tc: f64,
+        neg_null_bet: Option<f64>,
+        max_tc: Option<f32>,
+        wongout_under: Option<f32>,
+    ) -> HiloBetting {
         HiloBetting {
             base,
             per_tc,
@@ -37,7 +41,8 @@ impl BettingStrategy for HiloBetting {
         true_count = true_count.round();
 
         if self.wongout_under.is_some()
-            && true_count <= self.wongout_under.unwrap() {
+            && true_count <= self.wongout_under.unwrap()
+        {
             return 0.0;
         } else if self.neg_null_bet.is_some() && true_count <= 0.0 {
             return self.neg_null_bet.unwrap();
@@ -55,7 +60,7 @@ impl BettingStrategy for HiloBetting {
 
 #[cfg(test)]
 mod tests {
-    use crate::betting::{FixedBet, BettingStrategy, HiloBetting};
+    use crate::betting::{BettingStrategy, FixedBet, HiloBetting};
 
     #[test]
     fn it_uses_a_fixed_bet() {
@@ -72,9 +77,9 @@ mod tests {
 
         assert_eq!(betting.place_bet(-5.0), 0.0);
         assert_eq!(betting.place_bet(-1.0), 5.0);
-        assert_eq!(betting.place_bet(0.0),  7.0);
-        assert_eq!(betting.place_bet(1.0),  9.0);
-        assert_eq!(betting.place_bet(2.0),  11.0);
+        assert_eq!(betting.place_bet(0.0), 7.0);
+        assert_eq!(betting.place_bet(1.0), 9.0);
+        assert_eq!(betting.place_bet(2.0), 11.0);
         assert_eq!(betting.place_bet(10.0), 27.0);
     }
 
@@ -84,9 +89,9 @@ mod tests {
 
         assert_eq!(betting.place_bet(-5.0), 5.0);
         assert_eq!(betting.place_bet(-1.0), 5.0);
-        assert_eq!(betting.place_bet(0.0),  5.0);
-        assert_eq!(betting.place_bet(1.0),  12.0);
-        assert_eq!(betting.place_bet(2.0),  14.0);
+        assert_eq!(betting.place_bet(0.0), 5.0);
+        assert_eq!(betting.place_bet(1.0), 12.0);
+        assert_eq!(betting.place_bet(2.0), 14.0);
         assert_eq!(betting.place_bet(10.0), 30.0);
     }
 
@@ -96,9 +101,9 @@ mod tests {
 
         assert_eq!(betting.place_bet(-5.0), 0.0);
         assert_eq!(betting.place_bet(-1.0), 8.0);
-        assert_eq!(betting.place_bet(0.0),  10.0);
-        assert_eq!(betting.place_bet(1.0),  12.0);
-        assert_eq!(betting.place_bet(2.0),  14.0);
+        assert_eq!(betting.place_bet(0.0), 10.0);
+        assert_eq!(betting.place_bet(1.0), 12.0);
+        assert_eq!(betting.place_bet(2.0), 14.0);
         assert_eq!(betting.place_bet(10.0), 20.0);
     }
 
@@ -110,27 +115,26 @@ mod tests {
         assert_eq!(betting.place_bet(-4.0), 0.0);
         assert_eq!(betting.place_bet(-3.0), 4.0);
         assert_eq!(betting.place_bet(-1.0), 8.0);
-        assert_eq!(betting.place_bet(0.0),  10.0);
-        assert_eq!(betting.place_bet(1.0),  12.0);
-        assert_eq!(betting.place_bet(2.0),  14.0);
+        assert_eq!(betting.place_bet(0.0), 10.0);
+        assert_eq!(betting.place_bet(1.0), 12.0);
+        assert_eq!(betting.place_bet(2.0), 14.0);
         assert_eq!(betting.place_bet(10.0), 30.0);
     }
 
     #[test]
     fn it_uses_hilo_betting_with_all_options() {
-        let betting = HiloBetting::new(
-            0.0, 10.0, Some(5.0), Some(5.0), Some(-5.0)
-        );
+        let betting =
+            HiloBetting::new(0.0, 10.0, Some(5.0), Some(5.0), Some(-5.0));
 
         assert_eq!(betting.place_bet(-5.0), 0.0);
         assert_eq!(betting.place_bet(-4.0), 5.0);
         assert_eq!(betting.place_bet(-3.0), 5.0);
         assert_eq!(betting.place_bet(-1.0), 5.0);
-        assert_eq!(betting.place_bet(0.0),  5.0);
-        assert_eq!(betting.place_bet(1.0),  10.0);
-        assert_eq!(betting.place_bet(2.0),  20.0);
-        assert_eq!(betting.place_bet(5.0),  50.0);
-        assert_eq!(betting.place_bet(6.0),  50.0);
+        assert_eq!(betting.place_bet(0.0), 5.0);
+        assert_eq!(betting.place_bet(1.0), 10.0);
+        assert_eq!(betting.place_bet(2.0), 20.0);
+        assert_eq!(betting.place_bet(5.0), 50.0);
+        assert_eq!(betting.place_bet(6.0), 50.0);
         assert_eq!(betting.place_bet(10.0), 50.0);
     }
 }

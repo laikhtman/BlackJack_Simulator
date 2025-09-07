@@ -1,6 +1,6 @@
-use crate::simulator::{Simulator, SimulationResult};
-use crate::shoe::CardShoe;
 use crate::round_factory::RoundFactory;
+use crate::shoe::CardShoe;
+use crate::simulator::{SimulationResult, Simulator};
 
 pub struct SmpSimulator<'a> {
     round_count: u64,
@@ -13,14 +13,16 @@ pub struct SmpSimulator<'a> {
 }
 
 impl<'a> SmpSimulator<'a> {
-    pub fn new(round_count: u64,
-               round_factory: RoundFactory<'a>,
-               shoe_factory: Box<dyn Fn() -> Box<dyn CardShoe + Send>>,
-               force_tc: Option<f32>,
-               adjust_rc: Option<i32>,
-               num_threads: u32,
-               verbose: bool) -> SmpSimulator {
-        SmpSimulator {
+    pub fn new(
+        round_count: u64,
+        round_factory: RoundFactory<'a>,
+        shoe_factory: Box<dyn Fn() -> Box<dyn CardShoe + Send>>,
+        force_tc: Option<f32>,
+        adjust_rc: Option<i32>,
+        num_threads: u32,
+        verbose: bool,
+    ) -> Self {
+        Self {
             round_count,
             round_factory,
             shoe_factory,
@@ -64,7 +66,8 @@ impl<'a> SmpSimulator<'a> {
             for thread in threads {
                 result += thread.join().unwrap();
             }
-        }).unwrap();
+        })
+        .unwrap();
 
         result
     }

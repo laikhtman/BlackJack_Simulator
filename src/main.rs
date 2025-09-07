@@ -7,18 +7,18 @@ mod output;
 use crate::options::Options;
 use crate::output::ProgramResult;
 
-use freebj::round_factory::RoundFactory;
-use freebj::game_rules::{GameRules, SurrenderPolicy};
 use freebj::basic_strategy::BasicStrategy;
-use freebj::betting::{FixedBet, HiloBetting, BettingStrategy};
-use freebj::smp_simulator::SmpSimulator;
-use std::process::exit;
-use std::path::Path;
+use freebj::betting::{BettingStrategy, FixedBet, HiloBetting};
+use freebj::card::Card;
+use freebj::game_rules::{GameRules, SurrenderPolicy};
+use freebj::round_factory::RoundFactory;
 use freebj::shoe::CardShoe;
 use freebj::shoe::file_shoe::FileShoe;
 use freebj::shoe::standard_shoe::StandardShoe;
+use freebj::smp_simulator::SmpSimulator;
 use std::collections::VecDeque;
-use freebj::card::Card;
+use std::path::Path;
+use std::process::exit;
 
 fn main() {
     let options = Options::from_argv();
@@ -37,7 +37,8 @@ fn main() {
     };
 
     if options.surrender_override.unwrap_or(false)
-        && game_rules.surrender == SurrenderPolicy::NoSurrender {
+        && game_rules.surrender == SurrenderPolicy::NoSurrender
+    {
         eprintln!("Unable to always surrender");
         exit(2);
     }
@@ -50,22 +51,23 @@ fn main() {
         strategy.add_deviation(dev);
     }
 
-    let betting: Box<dyn BettingStrategy + Sync>;
-    if options.hilo_counting {
-        betting = Box::new(HiloBetting::new(
+    let betting: Box<dyn BettingStrategy + Sync> = if options.hilo_counting {
+        Box::new(HiloBetting::new(
             options.bet,
             options.bet_per_tc,
             options.bet_neg_tc,
             options.bet_max_tc,
             options.wongout_under,
-        ));
+        ))
     } else {
-        betting = Box::new(FixedBet(options.bet));
-    }
+        Box::new(FixedBet(options.bet))
+    };
 
-    let adjust_rc = get_rc_adjust(options.hilo_counting,
-                                  &options.start_cards,
-                                  &options.dealer_cards);
+    let adjust_rc = get_rc_adjust(
+        options.hilo_counting,
+        &options.start_cards,
+        &options.dealer_cards,
+    );
 
     let round_factory = RoundFactory::new(
         &game_rules,
@@ -92,12 +94,7 @@ fn main() {
         });
     }
 
-    let real_num_rounds;
-    if options.dry_run {
-        real_num_rounds = 0;
-    } else {
-        real_num_rounds = options.rounds;
-    }
+    let real_num_rounds = if options.dry_run { 0 } else { options.rounds };
 
     let simulator = SmpSimulator::new(
         real_num_rounds,
@@ -125,17 +122,19 @@ fn main() {
 /// # Parameters
 ///
 ///  * `hilo_counting` - Whether hi-lo card counting is enabled, if false no
-///                      adjustement is required;
+///                      adjustment is required;
 ///  * `start_cards` - Players' starting cards;
 ///  * `dealer_cards` - Dealer's starting cards.
 ///
-/// The adjustement counts one for each high card (ace and ten), and minus one
+/// The adjustment counts one for each high card (ace and ten), and minus one
 /// for each low card (2 to 6 included). `Some(0)` is never returned.
 ///
-/// FIXME: return `i32` only
-fn get_rc_adjust(hilo_counting: bool,
-                 start_cards: &Option<VecDeque<Card>>,
-                 dealer_cards: &Option<VecDeque<Card>>) -> Option<i32> {
+// FIXME: return `i32` only
+fn get_rc_adjust(
+    hilo_counting: bool,
+    start_cards: &Option<VecDeque<Card>>,
+    dealer_cards: &Option<VecDeque<Card>>,
+) -> Option<i32> {
     if hilo_counting {
         let mut rel_rc = 0;
         if let Some(cards) = start_cards {
@@ -156,11 +155,7 @@ fn get_rc_adjust(hilo_counting: bool,
                 }
             }
         }
-        if rel_rc != 0 {
-            Some(rel_rc)
-        } else {
-            None
-        }
+        if rel_rc != 0 { Some(rel_rc) } else { None }
     } else {
         None
     }

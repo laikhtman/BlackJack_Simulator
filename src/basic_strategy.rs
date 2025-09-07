@@ -1,10 +1,10 @@
-use crate::strategy::{Strategy, GameContext, Decision};
-use crate::hand::Hand;
 use crate::card::Card;
-use crate::strategy::Decision::*;
+use crate::deviation::{Deviation, DeviationTable};
 use crate::game_rules::GameType::Ahc;
 use crate::game_rules::Soft17::{H17, S17};
-use crate::deviation::{Deviation, DeviationTable};
+use crate::hand::Hand;
+use crate::strategy::Decision::*;
+use crate::strategy::{Decision, GameContext, Strategy};
 
 static HARD_TABLE: [&[u8; 11]; 17] = [
     // A23456789J
@@ -26,7 +26,6 @@ static HARD_TABLE: [&[u8; 11]; 17] = [
     b" ++++++++++", // 6
     b" ++++++++++", // 5
     b" ++++++++++", // 4
-    // A23456789J
 ];
 
 static SOFT_TABLE: [&[u8; 11]; 10] = [
@@ -41,7 +40,6 @@ static SOFT_TABLE: [&[u8; 11]; 10] = [
     b" ++++DD++++", // 3
     b" ++++DD++++", // 2
     b" +++++D++++", // A
-    // A23456789J
 ];
 
 static PAIRS_TABLE: [&[u8; 11]; 10] = [
@@ -56,7 +54,6 @@ static PAIRS_TABLE: [&[u8; 11]; 10] = [
     b"  **VVVV   ", // 3/3
     b"  **VVVV   ", // 2/2
     b" ?VVVVVVVVV", // A/A
-    // A23456789J
 ];
 
 static DEFAULT_HARD_DEVIATIONS: [[u8; 40]; 17] = [
@@ -79,7 +76,6 @@ static DEFAULT_HARD_DEVIATIONS: [[u8; 40]; 17] = [
     *b"                                        ", // 6
     *b"                                        ", // 5
     *b"                                        ", // 4
-    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 ];
 
 static DEFAULT_SOFT_DEVIATIONS: [[u8; 40]; 10] = [
@@ -94,7 +90,6 @@ static DEFAULT_SOFT_DEVIATIONS: [[u8; 40]; 10] = [
     *b"                                        ", // A3
     *b"                                        ", // A2
     *b"                                        ", // AA
-    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 ];
 
 static DEFAULT_PAIR_DEVIATIONS: [[u8; 40]; 10] = [
@@ -109,7 +104,6 @@ static DEFAULT_PAIR_DEVIATIONS: [[u8; 40]; 10] = [
     *b"                                        ", // 3/3
     *b"                                        ", // 2/2
     *b"                                        ", // A/A
-    //  A | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 ];
 
 pub struct BasicStrategy {
@@ -145,13 +139,13 @@ impl BasicStrategy {
         let slice: &mut [u8] = match deviation.table {
             DeviationTable::HardTable => {
                 &mut self.dev_hard_table[deviation.row as usize]
-            },
+            }
             DeviationTable::SoftTable => {
                 &mut self.dev_soft_table[deviation.row as usize]
-            },
+            }
             DeviationTable::PairTable => {
                 &mut self.dev_pair_table[deviation.row as usize]
-            },
+            }
         };
 
         let index = (deviation.dealer as usize - 1) << 2;
@@ -162,10 +156,12 @@ impl BasicStrategy {
         self.deviations = true;
     }
 
-    fn basic_strategy(&self,
-                      game: &GameContext,
-                      dealer: Card,
-                      me: &Hand) -> u8 {
+    fn basic_strategy(
+        &self,
+        game: &GameContext,
+        dealer: Card,
+        me: &Hand,
+    ) -> u8 {
         if me.value() == 21 {
             return b'=';
         }
@@ -175,9 +171,10 @@ impl BasicStrategy {
             let ahc = game.rules.game_type == Ahc;
 
             if ch == b'V'
-               || (ch == b'*' && game.rules.das)
-               || (ch == b'?' && ahc)
-               || (ch == b'@' && ahc && game.rules.soft17 == S17) {
+                || (ch == b'*' && game.rules.das)
+                || (ch == b'?' && ahc)
+                || (ch == b'@' && ahc && game.rules.soft17 == S17)
+            {
                 return b'V';
             }
         }
@@ -190,19 +187,23 @@ impl BasicStrategy {
         }
     }
 
-    fn holecarding_strategy(&self,
-                            _game: &GameContext,
-                            _d1: Card,
-                            _d2: Card,
-                            _me: &Hand) -> u8 {
+    fn holecarding_strategy(
+        &self,
+        _game: &GameContext,
+        _d1: Card,
+        _d2: Card,
+        _me: &Hand,
+    ) -> u8 {
         unimplemented!()
     }
 
-    fn apply_deviations(&self,
-                        decision: &mut u8,
-                        game: &GameContext,
-                        dealer: Card,
-                        me: &Hand) {
+    fn apply_deviations(
+        &self,
+        decision: &mut u8,
+        game: &GameContext,
+        dealer: Card,
+        me: &Hand,
+    ) {
         let tc = game.true_count.round() as i8;
         let val = me.value() as usize;
 
@@ -222,18 +223,15 @@ impl BasicStrategy {
             }
         }
 
-        let dev;
-
-        if me.is_soft() {
+        let dev = if me.is_soft() {
             let soft_sum = me.iter().map(|c| c.0 as usize).sum::<usize>() - 1;
-            dev = &self.dev_soft_table[10 - soft_sum][d_index..d_index + 4];
+            &self.dev_soft_table[10 - soft_sum][d_index..d_index + 4]
         } else {
-            dev = &self.dev_hard_table[20 - val][d_index..d_index + 4];
-        }
+            &self.dev_hard_table[20 - val][d_index..d_index + 4]
+        };
 
         if let Some(action) = self.try_deviate(dev, tc) {
             *decision = action;
-            return;
         }
     }
 
@@ -252,7 +250,8 @@ impl BasicStrategy {
         }
 
         if (dev[0] == b'>' && tc >= tc_trig)
-            || (dev[0] == b'<' && tc <= tc_trig) {
+            || (dev[0] == b'<' && tc <= tc_trig)
+        {
             Some(dev[3])
         } else {
             None
@@ -261,10 +260,12 @@ impl BasicStrategy {
 }
 
 impl Strategy for BasicStrategy {
-    fn player_turn(&self,
-                   game: &GameContext,
-                   dealer: Card,
-                   me: &Hand) -> Decision {
+    fn player_turn(
+        &self,
+        game: &GameContext,
+        dealer: Card,
+        me: &Hand,
+    ) -> Decision {
         let mut decision = if let Some(holecard) = game.holecard {
             self.holecarding_strategy(game, dealer, holecard, me)
         } else {
@@ -278,8 +279,9 @@ impl Strategy for BasicStrategy {
         decision = match decision {
             b'?' if game.rules.game_type == Ahc => b'D',
             b'?' => b'+',
-            b'&' if game.rules.game_type == Ahc
-                   && game.rules.soft17 == H17 => b'D',
+            b'&' if game.rules.game_type == Ahc && game.rules.soft17 == H17 => {
+                b'D'
+            }
             b'&' => b'+',
             b'h' if game.rules.soft17 == H17 => b'd',
             b'h' => b'=',
@@ -301,11 +303,13 @@ impl Strategy for BasicStrategy {
         }
     }
 
-    fn surrender(&self,
-                 game: &GameContext,
-                 dealer: Card,
-                 me: &Hand,
-                 is_early: bool) -> bool {
+    fn surrender(
+        &self,
+        game: &GameContext,
+        dealer: Card,
+        me: &Hand,
+        is_early: bool,
+    ) -> bool {
         if me.is_soft() {
             return false;
         }
@@ -337,210 +341,210 @@ impl Strategy for BasicStrategy {
 
 #[cfg(test)]
 mod tests {
-    use crate::strategy::{Decision, GameContext, Strategy};
-    use crate::card::Card;
     use crate::basic_strategy::BasicStrategy;
-    use crate::game_rules::GameRules;
-    use crate::strategy::Decision::*;
-    use crate::hand::Hand;
-    use crate::test_utils::make_rules;
+    use crate::card::Card;
     use crate::deviation::Deviation;
+    use crate::game_rules::GameRules;
+    use crate::hand::Hand;
+    use crate::strategy::Decision::*;
+    use crate::strategy::{Decision, GameContext, Strategy};
+    use crate::test_utils::make_rules;
     use std::str::FromStr;
 
     #[test]
     fn it_plays_hard_hands() {
-        test_decision(Stand,  &[3, 7, 10], 10, AHC|S17);
+        test_decision(Stand, &[3, 7, 10], 10, AHC | S17);
 
-        test_decision(Stand,  &[10, 7],  7,  AHC|S17);
+        test_decision(Stand, &[10, 7], 7, AHC | S17);
 
-        test_decision(Stand,  &[10, 6],  6,  AHC|S17);
-        test_decision(Hit,    &[10, 6],  7,  AHC|S17);
+        test_decision(Stand, &[10, 6], 6, AHC | S17);
+        test_decision(Hit, &[10, 6], 7, AHC | S17);
 
-        test_decision(Hit,    &[10, 2],  2,  AHC|S17);
-        test_decision(Hit,    &[10, 2],  3,  AHC|S17);
-        test_decision(Stand,  &[10, 2],  4,  AHC|S17);
-        test_decision(Stand,  &[10, 2],  6,  AHC|S17);
-        test_decision(Hit,    &[10, 2],  10, AHC|S17);
+        test_decision(Hit, &[10, 2], 2, AHC | S17);
+        test_decision(Hit, &[10, 2], 3, AHC | S17);
+        test_decision(Stand, &[10, 2], 4, AHC | S17);
+        test_decision(Stand, &[10, 2], 6, AHC | S17);
+        test_decision(Hit, &[10, 2], 10, AHC | S17);
 
-        test_decision(Double, &[4, 7],   6,  AHC|S17);
-        test_decision(Hit,    &[4, 7],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Double, &[4, 7],   10, AHC|S17);
-        test_decision(Hit,    &[4, 7],   10, ENHC|S17);
-        test_decision(Hit,    &[4, 7],   1,  ENHC|S17);
-        test_decision(Hit,    &[4, 7],   1,  AHC|S17);
-        test_decision(Double, &[4, 7],   1,  AHC|H17);
+        test_decision(Double, &[4, 7], 6, AHC | S17);
+        test_decision(Hit, &[4, 7], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Double, &[4, 7], 10, AHC | S17);
+        test_decision(Hit, &[4, 7], 10, ENHC | S17);
+        test_decision(Hit, &[4, 7], 1, ENHC | S17);
+        test_decision(Hit, &[4, 7], 1, AHC | S17);
+        test_decision(Double, &[4, 7], 1, AHC | H17);
 
-        test_decision(Double, &[4, 6],   6,  AHC|S17);
-        test_decision(Hit,    &[4, 6],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[4, 6],   10, AHC|S17);
-        test_decision(Hit,    &[4, 6],   1,  AHC|S17);
+        test_decision(Double, &[4, 6], 6, AHC | S17);
+        test_decision(Hit, &[4, 6], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[4, 6], 10, AHC | S17);
+        test_decision(Hit, &[4, 6], 1, AHC | S17);
 
-        test_decision(Hit,    &[4, 5],   2,  AHC|S17);
-        test_decision(Double, &[4, 5],   3,  AHC|S17);
-        test_decision(Double, &[4, 5],   6,  AHC|S17);
-        test_decision(Hit,    &[4, 5],   7,  AHC|S17);
+        test_decision(Hit, &[4, 5], 2, AHC | S17);
+        test_decision(Double, &[4, 5], 3, AHC | S17);
+        test_decision(Double, &[4, 5], 6, AHC | S17);
+        test_decision(Hit, &[4, 5], 7, AHC | S17);
 
-        test_decision(Hit,    &[5, 3],   6,  AHC|S17);
+        test_decision(Hit, &[5, 3], 6, AHC | S17);
 
-        test_decision(Hit,    &[2, 2],   2,  AHC|S17|NO_SPLIT);
-        test_decision(Hit,    &[2, 2],   1,  AHC|S17|NO_SPLIT);
+        test_decision(Hit, &[2, 2], 2, AHC | S17 | NO_SPLIT);
+        test_decision(Hit, &[2, 2], 1, AHC | S17 | NO_SPLIT);
     }
 
     #[test]
     fn it_plays_soft_hands() {
-        test_decision(Stand,  &[10, 1],  2,  AHC|S17);
-        test_decision(Stand,  &[10, 1],  1,  AHC|S17);
+        test_decision(Stand, &[10, 1], 2, AHC | S17);
+        test_decision(Stand, &[10, 1], 1, AHC | S17);
 
-        test_decision(Stand,  &[1, 9],   2,  AHC|S17);
-        test_decision(Stand,  &[1, 9],   6,  AHC|S17);
-        test_decision(Stand,  &[1, 9],   10, AHC|S17);
-        test_decision(Stand,  &[1, 9],   1,  AHC|S17);
+        test_decision(Stand, &[1, 9], 2, AHC | S17);
+        test_decision(Stand, &[1, 9], 6, AHC | S17);
+        test_decision(Stand, &[1, 9], 10, AHC | S17);
+        test_decision(Stand, &[1, 9], 1, AHC | S17);
 
-        test_decision(Stand,  &[1, 8],   6,  AHC|S17);
-        test_decision(Double, &[1, 8],   6,  AHC|H17);
-        test_decision(Stand,  &[1, 8],   6,  AHC|H17|NO_DOUBLE);
-        test_decision(Stand,  &[1, 8],   10, AHC|S17);
-        test_decision(Stand,  &[1, 8],   1,  AHC|S17);
+        test_decision(Stand, &[1, 8], 6, AHC | S17);
+        test_decision(Double, &[1, 8], 6, AHC | H17);
+        test_decision(Stand, &[1, 8], 6, AHC | H17 | NO_DOUBLE);
+        test_decision(Stand, &[1, 8], 10, AHC | S17);
+        test_decision(Stand, &[1, 8], 1, AHC | S17);
 
-        test_decision(Stand,  &[1, 7],   2,  AHC|S17);
-        test_decision(Double, &[1, 7],   2,  AHC|H17);
-        test_decision(Stand,  &[1, 7],   2,  AHC|H17|NO_DOUBLE);
-        test_decision(Double, &[1, 7],   3,  AHC|S17);
-        test_decision(Stand,  &[1, 7],   3,  AHC|S17|NO_DOUBLE);
-        test_decision(Double, &[1, 7],   6,  AHC|S17);
-        test_decision(Stand,  &[1, 7],   7,  AHC|S17);
-        test_decision(Stand,  &[1, 7],   8,  AHC|S17);
-        test_decision(Hit,    &[1, 7],   9,  AHC|S17);
-        test_decision(Hit,    &[1, 7],   10, AHC|S17);
-        test_decision(Hit,    &[1, 7],   1,  AHC|S17);
+        test_decision(Stand, &[1, 7], 2, AHC | S17);
+        test_decision(Double, &[1, 7], 2, AHC | H17);
+        test_decision(Stand, &[1, 7], 2, AHC | H17 | NO_DOUBLE);
+        test_decision(Double, &[1, 7], 3, AHC | S17);
+        test_decision(Stand, &[1, 7], 3, AHC | S17 | NO_DOUBLE);
+        test_decision(Double, &[1, 7], 6, AHC | S17);
+        test_decision(Stand, &[1, 7], 7, AHC | S17);
+        test_decision(Stand, &[1, 7], 8, AHC | S17);
+        test_decision(Hit, &[1, 7], 9, AHC | S17);
+        test_decision(Hit, &[1, 7], 10, AHC | S17);
+        test_decision(Hit, &[1, 7], 1, AHC | S17);
 
-        test_decision(Hit,    &[1, 6],   2,  AHC|S17);
-        test_decision(Double, &[1, 6],   3,  AHC|S17);
-        test_decision(Double, &[1, 6],   6,  AHC|S17);
-        test_decision(Hit,    &[1, 6],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[1, 6],   7,  AHC|S17);
-        test_decision(Hit,    &[1, 6],   10, AHC|S17);
+        test_decision(Hit, &[1, 6], 2, AHC | S17);
+        test_decision(Double, &[1, 6], 3, AHC | S17);
+        test_decision(Double, &[1, 6], 6, AHC | S17);
+        test_decision(Hit, &[1, 6], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[1, 6], 7, AHC | S17);
+        test_decision(Hit, &[1, 6], 10, AHC | S17);
 
-        test_decision(Hit,    &[1, 5],   3,  AHC|S17);
-        test_decision(Double, &[1, 5],   4,  AHC|S17);
-        test_decision(Double, &[1, 5],   6,  AHC|S17);
-        test_decision(Hit,    &[1, 5],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[1, 5],   7,  AHC|S17);
-        test_decision(Hit,    &[1, 5],   10, AHC|S17);
+        test_decision(Hit, &[1, 5], 3, AHC | S17);
+        test_decision(Double, &[1, 5], 4, AHC | S17);
+        test_decision(Double, &[1, 5], 6, AHC | S17);
+        test_decision(Hit, &[1, 5], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[1, 5], 7, AHC | S17);
+        test_decision(Hit, &[1, 5], 10, AHC | S17);
 
-        test_decision(Hit,    &[1, 4],   3,  AHC|S17);
-        test_decision(Double, &[1, 4],   4,  AHC|S17);
-        test_decision(Double, &[1, 4],   6,  AHC|S17);
-        test_decision(Hit,    &[1, 4],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[1, 4],   7,  AHC|S17);
-        test_decision(Hit,    &[1, 4],   10, AHC|S17);
+        test_decision(Hit, &[1, 4], 3, AHC | S17);
+        test_decision(Double, &[1, 4], 4, AHC | S17);
+        test_decision(Double, &[1, 4], 6, AHC | S17);
+        test_decision(Hit, &[1, 4], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[1, 4], 7, AHC | S17);
+        test_decision(Hit, &[1, 4], 10, AHC | S17);
 
-        test_decision(Hit,    &[1, 3],   4,  AHC|S17);
-        test_decision(Double, &[1, 3],   5,  AHC|S17);
-        test_decision(Double, &[1, 3],   6,  AHC|S17);
-        test_decision(Hit,    &[1, 3],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[1, 3],   7,  AHC|S17);
-        test_decision(Hit,    &[1, 3],   10, AHC|S17);
+        test_decision(Hit, &[1, 3], 4, AHC | S17);
+        test_decision(Double, &[1, 3], 5, AHC | S17);
+        test_decision(Double, &[1, 3], 6, AHC | S17);
+        test_decision(Hit, &[1, 3], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[1, 3], 7, AHC | S17);
+        test_decision(Hit, &[1, 3], 10, AHC | S17);
 
-        test_decision(Hit,    &[1, 2],   4,  AHC|S17);
-        test_decision(Double, &[1, 2],   5,  AHC|S17);
-        test_decision(Double, &[1, 2],   6,  AHC|S17);
-        test_decision(Hit,    &[1, 2],   6,  AHC|S17|NO_DOUBLE);
-        test_decision(Hit,    &[1, 2],   7,  AHC|S17);
-        test_decision(Hit,    &[1, 2],   10, AHC|S17);
-        test_decision(Hit,    &[1, 2],   1,  AHC|S17);
+        test_decision(Hit, &[1, 2], 4, AHC | S17);
+        test_decision(Double, &[1, 2], 5, AHC | S17);
+        test_decision(Double, &[1, 2], 6, AHC | S17);
+        test_decision(Hit, &[1, 2], 6, AHC | S17 | NO_DOUBLE);
+        test_decision(Hit, &[1, 2], 7, AHC | S17);
+        test_decision(Hit, &[1, 2], 10, AHC | S17);
+        test_decision(Hit, &[1, 2], 1, AHC | S17);
     }
 
     #[test]
     fn it_plays_pairs() {
-        test_decision(Split,  &[1, 1],   2,  AHC|S17);
-        test_decision(Split,  &[1, 1],   6,  AHC|S17);
-        test_decision(Split,  &[1, 1],   7,  AHC|S17);
-        test_decision(Split,  &[1, 1],   10, AHC|S17);
-        test_decision(Split,  &[1, 1],   1,  AHC|S17);
-        test_decision(Hit,    &[1, 1],   1,  ENHC|S17);
+        test_decision(Split, &[1, 1], 2, AHC | S17);
+        test_decision(Split, &[1, 1], 6, AHC | S17);
+        test_decision(Split, &[1, 1], 7, AHC | S17);
+        test_decision(Split, &[1, 1], 10, AHC | S17);
+        test_decision(Split, &[1, 1], 1, AHC | S17);
+        test_decision(Hit, &[1, 1], 1, ENHC | S17);
 
-        test_decision(Stand,  &[10, 10], 2,  AHC|S17);
-        test_decision(Stand,  &[10, 10], 6,  AHC|S17);
-        test_decision(Stand,  &[10, 10], 7,  AHC|S17);
-        test_decision(Stand,  &[10, 10], 10, AHC|S17);
-        test_decision(Stand,  &[10, 10], 1,  AHC|S17);
+        test_decision(Stand, &[10, 10], 2, AHC | S17);
+        test_decision(Stand, &[10, 10], 6, AHC | S17);
+        test_decision(Stand, &[10, 10], 7, AHC | S17);
+        test_decision(Stand, &[10, 10], 10, AHC | S17);
+        test_decision(Stand, &[10, 10], 1, AHC | S17);
 
-        test_decision(Split,  &[9, 9],   2,  AHC|S17);
-        test_decision(Split,  &[9, 9],   6,  AHC|S17);
-        test_decision(Stand,  &[9, 9],   7,  AHC|S17);
-        test_decision(Split,  &[9, 9],   8,  AHC|S17);
-        test_decision(Split,  &[9, 9],   9,  AHC|S17);
-        test_decision(Stand,  &[9, 9],   10, AHC|S17);
-        test_decision(Stand,  &[9, 9],   1,  AHC|S17);
+        test_decision(Split, &[9, 9], 2, AHC | S17);
+        test_decision(Split, &[9, 9], 6, AHC | S17);
+        test_decision(Stand, &[9, 9], 7, AHC | S17);
+        test_decision(Split, &[9, 9], 8, AHC | S17);
+        test_decision(Split, &[9, 9], 9, AHC | S17);
+        test_decision(Stand, &[9, 9], 10, AHC | S17);
+        test_decision(Stand, &[9, 9], 1, AHC | S17);
 
-        test_decision(Split,  &[8, 8],   2,  AHC|S17);
-        test_decision(Split,  &[8, 8],   6,  AHC|S17);
-        test_decision(Split,  &[8, 8],   7,  AHC|S17);
-        test_decision(Split,  &[8, 8],   10, AHC|S17);
-        test_decision(Hit,    &[8, 8],   10, ENHC|S17);
-        test_decision(Split,  &[8, 8],   1,  AHC|S17);
-        test_decision(Hit,    &[8, 8],   1,  AHC|H17);
-        test_decision(Hit,    &[8, 8],   1,  ENHC|S17);
-        test_decision(Hit,    &[8, 8],   1,  ENHC|H17);
+        test_decision(Split, &[8, 8], 2, AHC | S17);
+        test_decision(Split, &[8, 8], 6, AHC | S17);
+        test_decision(Split, &[8, 8], 7, AHC | S17);
+        test_decision(Split, &[8, 8], 10, AHC | S17);
+        test_decision(Hit, &[8, 8], 10, ENHC | S17);
+        test_decision(Split, &[8, 8], 1, AHC | S17);
+        test_decision(Hit, &[8, 8], 1, AHC | H17);
+        test_decision(Hit, &[8, 8], 1, ENHC | S17);
+        test_decision(Hit, &[8, 8], 1, ENHC | H17);
 
-        test_decision(Split,  &[7, 7],   2,  AHC|S17);
-        test_decision(Split,  &[7, 7],   6,  AHC|S17);
-        test_decision(Split,  &[7, 7],   7,  AHC|S17);
-        test_decision(Hit,    &[7, 7],   8,  AHC|S17);
+        test_decision(Split, &[7, 7], 2, AHC | S17);
+        test_decision(Split, &[7, 7], 6, AHC | S17);
+        test_decision(Split, &[7, 7], 7, AHC | S17);
+        test_decision(Hit, &[7, 7], 8, AHC | S17);
 
-        test_decision(Hit,    &[6, 6],   2,  AHC|S17);
-        test_decision(Split,  &[6, 6],   2,  AHC|S17|DAS);
-        test_decision(Split,  &[6, 6],   6,  AHC|S17);
-        test_decision(Hit,    &[6, 6],   7,  AHC|S17);
+        test_decision(Hit, &[6, 6], 2, AHC | S17);
+        test_decision(Split, &[6, 6], 2, AHC | S17 | DAS);
+        test_decision(Split, &[6, 6], 6, AHC | S17);
+        test_decision(Hit, &[6, 6], 7, AHC | S17);
 
-        test_decision(Double, &[5, 5],   2,  AHC|S17);
-        test_decision(Double, &[5, 5],   6,  AHC|S17);
-        test_decision(Double, &[5, 5],   7,  AHC|S17);
-        test_decision(Hit,    &[5, 5],   10, AHC|S17);
-        test_decision(Hit,    &[5, 5],   1,  AHC|S17);
+        test_decision(Double, &[5, 5], 2, AHC | S17);
+        test_decision(Double, &[5, 5], 6, AHC | S17);
+        test_decision(Double, &[5, 5], 7, AHC | S17);
+        test_decision(Hit, &[5, 5], 10, AHC | S17);
+        test_decision(Hit, &[5, 5], 1, AHC | S17);
 
-        test_decision(Hit,    &[4, 4],   2,  AHC|S17);
-        test_decision(Hit,    &[4, 4],   4,  AHC|S17);
-        test_decision(Hit,    &[4, 4],   5,  AHC|S17);
-        test_decision(Split,  &[4, 4],   5,  AHC|S17|DAS);
-        test_decision(Hit,    &[4, 4],   6,  AHC|S17);
-        test_decision(Split,  &[4, 4],   6,  AHC|S17|DAS);
-        test_decision(Hit,    &[4, 4],   7,  AHC|S17);
+        test_decision(Hit, &[4, 4], 2, AHC | S17);
+        test_decision(Hit, &[4, 4], 4, AHC | S17);
+        test_decision(Hit, &[4, 4], 5, AHC | S17);
+        test_decision(Split, &[4, 4], 5, AHC | S17 | DAS);
+        test_decision(Hit, &[4, 4], 6, AHC | S17);
+        test_decision(Split, &[4, 4], 6, AHC | S17 | DAS);
+        test_decision(Hit, &[4, 4], 7, AHC | S17);
 
-        test_decision(Hit,    &[3, 3],   2,  AHC|S17);
-        test_decision(Split,  &[3, 3],   2,  AHC|S17|DAS);
-        test_decision(Hit,    &[3, 3],   3,  AHC|S17);
-        test_decision(Split,  &[3, 3],   3,  AHC|S17|DAS);
-        test_decision(Split,  &[3, 3],   4,  AHC|S17);
-        test_decision(Split,  &[3, 3],   7,  AHC|S17);
-        test_decision(Hit,    &[3, 3],   8,  AHC|S17);
+        test_decision(Hit, &[3, 3], 2, AHC | S17);
+        test_decision(Split, &[3, 3], 2, AHC | S17 | DAS);
+        test_decision(Hit, &[3, 3], 3, AHC | S17);
+        test_decision(Split, &[3, 3], 3, AHC | S17 | DAS);
+        test_decision(Split, &[3, 3], 4, AHC | S17);
+        test_decision(Split, &[3, 3], 7, AHC | S17);
+        test_decision(Hit, &[3, 3], 8, AHC | S17);
 
-        test_decision(Hit,    &[2, 2],   2,  AHC|S17);
-        test_decision(Split,  &[2, 2],   2,  AHC|S17|DAS);
-        test_decision(Hit,    &[2, 2],   3,  AHC|S17);
-        test_decision(Split,  &[2, 2],   3,  AHC|S17|DAS);
-        test_decision(Split,  &[2, 2],   4,  AHC|S17);
-        test_decision(Split,  &[2, 2],   7,  AHC|S17);
-        test_decision(Hit,    &[2, 2],   8,  AHC|S17);
+        test_decision(Hit, &[2, 2], 2, AHC | S17);
+        test_decision(Split, &[2, 2], 2, AHC | S17 | DAS);
+        test_decision(Hit, &[2, 2], 3, AHC | S17);
+        test_decision(Split, &[2, 2], 3, AHC | S17 | DAS);
+        test_decision(Split, &[2, 2], 4, AHC | S17);
+        test_decision(Split, &[2, 2], 7, AHC | S17);
+        test_decision(Hit, &[2, 2], 8, AHC | S17);
     }
 
     #[test]
     fn it_plays_surrenders() {
-        test_surrender(false, &[10, 7],  1,  AHC|S17|LSURR);
-        test_surrender(true,  &[10, 7],  1,  AHC|H17|LSURR);
-        test_surrender(true,  &[10, 7],  1,  AHC|S17|ESURR);
-        test_surrender(true,  &[10, 7],  1,  AHC|H17|ESURR);
+        test_surrender(false, &[10, 7], 1, AHC | S17 | LSURR);
+        test_surrender(true, &[10, 7], 1, AHC | H17 | LSURR);
+        test_surrender(true, &[10, 7], 1, AHC | S17 | ESURR);
+        test_surrender(true, &[10, 7], 1, AHC | H17 | ESURR);
 
-        test_surrender(false, &[10, 5],  1,  AHC|S17|LSURR);
-        test_surrender(true,  &[10, 5],  1,  AHC|H17|LSURR);
-        test_surrender(true,  &[10, 5],  1,  AHC|S17|ESURR);
-        test_surrender(true,  &[10, 5],  1,  AHC|H17|ESURR);
+        test_surrender(false, &[10, 5], 1, AHC | S17 | LSURR);
+        test_surrender(true, &[10, 5], 1, AHC | H17 | LSURR);
+        test_surrender(true, &[10, 5], 1, AHC | S17 | ESURR);
+        test_surrender(true, &[10, 5], 1, AHC | H17 | ESURR);
     }
 
     #[test]
     fn it_plays_specific_deviations() {
-        let rules = make_rules(AHC|S17);
+        let rules = make_rules(AHC | S17);
         let mut game = make_context(&rules, 0);
 
         let mut strat = BasicStrategy::new(true);
@@ -549,50 +553,57 @@ mod tests {
         strat.add_deviation(Deviation::from_str("A5vs2:<-2D").unwrap());
 
         game.true_count = 0.0;
-        assert_eq!(strat.player_turn(&game, Card(8),
-                                     &make_player_hand(&[10, 10])),
-                   Decision::Stand);
+        assert_eq!(
+            strat.player_turn(&game, Card(8), &make_player_hand(&[10, 10])),
+            Stand
+        );
 
         game.true_count = 2.0;
-        assert_eq!(strat.player_turn(&game, Card(8),
-                                     &make_player_hand(&[10, 10])),
-                   Decision::Double);
+        assert_eq!(
+            strat.player_turn(&game, Card(8), &make_player_hand(&[10, 10])),
+            Double
+        );
 
         game.true_count = 3.5;
-        assert_eq!(strat.player_turn(&game, Card(8),
-                                     &make_player_hand(&[10, 10])),
-                   Decision::Double);
+        assert_eq!(
+            strat.player_turn(&game, Card(8), &make_player_hand(&[10, 10])),
+            Double
+        );
 
         game.true_count = 5.0;
-        assert_eq!(strat.player_turn(&game, Card(8),
-                                     &make_player_hand(&[10, 10])),
-                   Decision::Split);
+        assert_eq!(
+            strat.player_turn(&game, Card(8), &make_player_hand(&[10, 10])),
+            Split
+        );
 
         game.true_count = 0.0;
-        assert_eq!(strat.player_turn(&game, Card(2),
-                                     &make_player_hand(&[1, 5])),
-                   Decision::Hit);
+        assert_eq!(
+            strat.player_turn(&game, Card(2), &make_player_hand(&[1, 5])),
+            Hit
+        );
 
         game.true_count = -2.0;
-        assert_eq!(strat.player_turn(&game, Card(2),
-                                     &make_player_hand(&[1, 5])),
-                   Decision::Double);
-        assert_eq!(strat.player_turn(&game, Card(3),
-                                     &make_player_hand(&[1, 5])),
-                   Decision::Hit);
+        assert_eq!(
+            strat.player_turn(&game, Card(2), &make_player_hand(&[1, 5])),
+            Double
+        );
+        assert_eq!(
+            strat.player_turn(&game, Card(3), &make_player_hand(&[1, 5])),
+            Hit
+        );
     }
 
-    const AHC: u32          = 0;
-    const ENHC: u32         = 1 << 0;
-    const S17: u32          = 0;
-    const H17: u32          = 1 << 1;
-    const DAS: u32          = 1 << 2;
-    const NO_DOUBLE: u32    = 1 << 3;
-    const NO_SPLIT: u32     = 1 << 4;
-    const ESURR: u32        = 0;
-    const LSURR: u32        = 1 << 5;
+    const AHC: u32 = 0;
+    const ENHC: u32 = 1 << 0;
+    const S17: u32 = 0;
+    const H17: u32 = 1 << 1;
+    const DAS: u32 = 1 << 2;
+    const NO_DOUBLE: u32 = 1 << 3;
+    const NO_SPLIT: u32 = 1 << 4;
+    const ESURR: u32 = 0;
+    const LSURR: u32 = 1 << 5;
 
-    fn make_context(rules: &GameRules, opts: u32) -> GameContext {
+    fn make_context(rules: &GameRules, opts: u32) -> GameContext<'_> {
         GameContext {
             rules,
             may_split: opts & NO_SPLIT == 0,
@@ -612,36 +623,36 @@ mod tests {
         hand
     }
 
-    fn test_decision(expected: Decision,
-                     hand: &[u8],
-                     dealer: u8,
-                     opts: u32) {
+    fn test_decision(expected: Decision, hand: &[u8], dealer: u8, opts: u32) {
         let strategy = BasicStrategy::new(false);
         let rules = make_rules(opts);
         let decision = strategy.player_turn(
             &make_context(&rules, opts),
             Card(dealer),
-            &make_player_hand(hand)
+            &make_player_hand(hand),
         );
 
-        assert_eq!(decision, expected,
-                   "{:?} vs {:?}, opts={:#b}", hand, dealer, opts);
+        assert_eq!(
+            decision, expected,
+            "{:?} vs {:?}, opts={:#b}",
+            hand, dealer, opts
+        );
     }
 
-    fn test_surrender(expected: bool,
-                      hand: &[u8],
-                      dealer: u8,
-                      opts: u32) {
+    fn test_surrender(expected: bool, hand: &[u8], dealer: u8, opts: u32) {
         let strategy = BasicStrategy::new(false);
         let rules = make_rules(opts);
         let decision = strategy.surrender(
             &make_context(&rules, opts),
             Card(dealer),
             &make_player_hand(hand),
-            opts & LSURR == 0
+            opts & LSURR == 0,
         );
 
-        assert_eq!(decision, expected,
-                   "{:?} vs {:?}, opts={:#b}", hand, dealer, opts);
+        assert_eq!(
+            decision, expected,
+            "{:?} vs {:?}, opts={:#b}",
+            hand, dealer, opts
+        );
     }
 }

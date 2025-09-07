@@ -1,7 +1,7 @@
 use crate::card::Card;
 use crate::shoe::CardShoe;
 use std::path::Path;
-use std::{fs, io, fmt};
+use std::{fmt, fs, io};
 
 pub struct FileShoe {
     cards: Vec<Card>,
@@ -12,10 +12,16 @@ pub struct FileShoe {
 
 impl FileShoe {
     pub fn new(file_path: &Path) -> Result<FileShoe, io::Error> {
-        let cards = fs::read(file_path)?.iter().map(|&n| {
-            assert!(n > 0 && n < 11);
-            Card(n)
-        }).collect();
+        let cards = fs::read(file_path)?
+            .iter()
+            .filter_map(|&n| match n {
+                b'1'..=b'9' => Some(Card(n - b'0')),
+                b'T' => Some(Card(10)),
+                b'A' => Some(Card(1)),
+                b' ' | b'\n' | b'\t' => None,
+                _ => panic!("Invalid byte {n:#02x}"),
+            })
+            .collect();
 
         Ok(FileShoe {
             cards,
@@ -53,14 +59,14 @@ impl CardShoe for FileShoe {
     fn try_pick(&mut self) -> Option<Card> {
         Some(
             self.next()
-                .expect("Reached maximum number of cards for this FileShoe")
+                .expect("Reached maximum number of cards for this FileShoe"),
         )
     }
 
     fn try_pick_first(&mut self, card: Card) -> Option<Card> {
         Some(
             self.find(|&c| c == card)
-                .expect("Reached maximum number of cards for this FileShoe")
+                .expect("Reached maximum number of cards for this FileShoe"),
         )
     }
 
@@ -94,19 +100,20 @@ impl fmt::Display for FileShoe {
 
 #[cfg(test)]
 mod tests {
-    use std::path::Path;
-    use std::fs::File;
-    use std::io::Write;
     use crate::card::Card;
     use crate::shoe::CardShoe;
     use crate::shoe::file_shoe::FileShoe;
+    use std::fs::File;
+    use std::io::Write;
+    use std::path::Path;
 
     #[test]
-    fn it_loads_a_file_shoe() {
+    fn it_loads_a_file_shoe_text() {
         let path = Path::new("/tmp/test_cards");
         let mut file = File::create(path).expect("Couldn't create test file");
-        file.write_all(&[1, 6, 8, 10, 4]).expect("Couldn't write test file");
-        std::mem::drop(file);
+        file.write_all(b"16\t8 TA4\n")
+            .expect("Couldn't write test file");
+        drop(file);
 
         let mut shoe = FileShoe::new(path).expect("Couldn't create FileShoe");
 
@@ -114,6 +121,7 @@ mod tests {
         assert_eq!(shoe.pick(), Card(6));
         assert_eq!(shoe.pick(), Card(8));
         assert_eq!(shoe.pick(), Card(10));
+        assert_eq!(shoe.pick(), Card(1));
         assert_eq!(shoe.pick(), Card(4));
     }
 }

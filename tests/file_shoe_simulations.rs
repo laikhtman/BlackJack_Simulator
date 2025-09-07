@@ -1,18 +1,24 @@
 mod utils;
 
-use utils::bin_runner::run_freebj;
 use crate::utils::assert_f64_eq;
+use utils::bin_runner::run_freebj;
 
 #[test]
 fn ahc_s17_das_d6() {
     let json = run_freebj(&[
-        "-n", "1M", "-j8",
-        "--ahc", "--s17", "--das", "-d6",
-        "--shoe-file", "rc/shoe_1M",
+        "-n",
+        "1M",
+        "-j8",
+        "--ahc",
+        "--s17",
+        "--das",
+        "-d6",
+        "--shoe-file",
+        "rc/shoe_1M",
     ]);
 
-    assert_eq!(json["rounds"].as_u64().unwrap(),    1_000_000);
-    assert_f64_eq(json["ev"].as_f64().unwrap(),     -0.00684000, 10e-8);
+    assert_eq!(json["rounds"].as_u64().unwrap(), 1_000_000);
+    assert_f64_eq(json["ev"].as_f64().unwrap(), -0.00684000, 10e-8);
     assert_f64_eq(json["stddev"].as_f64().unwrap(), 1.15675691, 10e-8);
 
     let rules = json["rules"].as_object().unwrap();
@@ -26,16 +32,16 @@ fn ahc_s17_das_d6() {
     assert_eq!(rules["decks"].as_u64().unwrap(), 6);
 
     let hands = json["hands"].as_object().unwrap();
-    assert_eq!(hands["total"].as_u64().unwrap(),        1_029_080);
-    assert_eq!(hands["won"].as_u64().unwrap(),          446_960);
-    assert_eq!(hands["lost"].as_u64().unwrap(),         493_448);
-    assert_eq!(hands["push"].as_u64().unwrap(),         88_672);
-    assert_eq!(hands["busted"].as_u64().unwrap(),       160_048);
-    assert_eq!(hands["blackjack"].as_u64().unwrap(),    47_464);
-    assert_eq!(hands["doubled"].as_u64().unwrap(),      104_456);
-    assert_eq!(hands["split"].as_u64().unwrap(),        54_920);
-    assert_eq!(hands["surrender"].as_u64().unwrap(),    0);
-    assert_eq!(hands["insured"].as_u64().unwrap(),      0);
+    assert_eq!(hands["total"].as_u64().unwrap(), 1_029_080);
+    assert_eq!(hands["won"].as_u64().unwrap(), 446_960);
+    assert_eq!(hands["lost"].as_u64().unwrap(), 493_448);
+    assert_eq!(hands["push"].as_u64().unwrap(), 88_672);
+    assert_eq!(hands["busted"].as_u64().unwrap(), 160_048);
+    assert_eq!(hands["blackjack"].as_u64().unwrap(), 47_464);
+    assert_eq!(hands["doubled"].as_u64().unwrap(), 104_456);
+    assert_eq!(hands["split"].as_u64().unwrap(), 54_920);
+    assert_eq!(hands["surrender"].as_u64().unwrap(), 0);
+    assert_eq!(hands["insured"].as_u64().unwrap(), 0);
 
     let distrib = json["winning_distrib"].as_object().unwrap();
     assert_eq!(distrib.len(), 15);
@@ -59,13 +65,20 @@ fn ahc_s17_das_d6() {
 #[test]
 fn ahc_s17_das_d6_esurr() {
     let json = run_freebj(&[
-        "-n", "1M", "-j8",
-        "--ahc", "--s17", "--das", "-d6", "--esurr",
-        "--shoe-file", "rc/shoe_1M",
+        "-n",
+        "1M",
+        "-j8",
+        "--ahc",
+        "--s17",
+        "--das",
+        "-d6",
+        "--esurr",
+        "--shoe-file",
+        "rc/shoe_1M",
     ]);
 
-    assert_eq!(json["rounds"].as_u64().unwrap(),    1_000_000);
-    assert_f64_eq(json["ev"].as_f64().unwrap(),     0.00227600, 10e-8);
+    assert_eq!(json["rounds"].as_u64().unwrap(), 1_000_000);
+    assert_f64_eq(json["ev"].as_f64().unwrap(), 0.00227600, 10e-8);
     assert_f64_eq(json["stddev"].as_f64().unwrap(), 1.12169429, 10e-8);
 
     let rules = json["rules"].as_object().unwrap();
@@ -79,16 +92,16 @@ fn ahc_s17_das_d6_esurr() {
     assert_eq!(rules["decks"].as_u64().unwrap(), 6);
 
     let hands = json["hands"].as_object().unwrap();
-    assert_eq!(hands["total"].as_u64().unwrap(),        1_026_904);
-    assert_eq!(hands["won"].as_u64().unwrap(),          427_040);
-    assert_eq!(hands["lost"].as_u64().unwrap(),         518_272);
-    assert_eq!(hands["push"].as_u64().unwrap(),         81_592);
-    assert_eq!(hands["busted"].as_u64().unwrap(),       111_720);
-    assert_eq!(hands["blackjack"].as_u64().unwrap(),    47_888);
-    assert_eq!(hands["doubled"].as_u64().unwrap(),      103_464);
-    assert_eq!(hands["split"].as_u64().unwrap(),        50_672);
-    assert_eq!(hands["surrender"].as_u64().unwrap(),    104_880);
-    assert_eq!(hands["insured"].as_u64().unwrap(),      0);
+    assert_eq!(hands["total"].as_u64().unwrap(), 1_026_904);
+    assert_eq!(hands["won"].as_u64().unwrap(), 427_040);
+    assert_eq!(hands["lost"].as_u64().unwrap(), 518_272);
+    assert_eq!(hands["push"].as_u64().unwrap(), 81_592);
+    assert_eq!(hands["busted"].as_u64().unwrap(), 111_720);
+    assert_eq!(hands["blackjack"].as_u64().unwrap(), 47_888);
+    assert_eq!(hands["doubled"].as_u64().unwrap(), 103_464);
+    assert_eq!(hands["split"].as_u64().unwrap(), 50_672);
+    assert_eq!(hands["surrender"].as_u64().unwrap(), 104_880);
+    assert_eq!(hands["insured"].as_u64().unwrap(), 0);
 
     let distrib = json["winning_distrib"].as_object().unwrap();
     assert_eq!(distrib.len(), 16);
@@ -113,13 +126,19 @@ fn ahc_s17_das_d6_esurr() {
 #[test]
 fn ahc_h17_das_d6() {
     let json = run_freebj(&[
-        "-n", "1M", "-j8",
-        "--ahc", "--h17", "--das", "-d6",
-        "--shoe-file", "rc/shoe_1M",
+        "-n",
+        "1M",
+        "-j8",
+        "--ahc",
+        "--h17",
+        "--das",
+        "-d6",
+        "--shoe-file",
+        "rc/shoe_1M",
     ]);
 
-    assert_eq!(json["rounds"].as_u64().unwrap(),    1_000_000);
-    assert_f64_eq(json["ev"].as_f64().unwrap(),     -0.01069200, 10e-8);
+    assert_eq!(json["rounds"].as_u64().unwrap(), 1_000_000);
+    assert_f64_eq(json["ev"].as_f64().unwrap(), -0.01069200, 10e-8);
     assert_f64_eq(json["stddev"].as_f64().unwrap(), 1.16202454, 10e-8);
 
     let rules = json["rules"].as_object().unwrap();
@@ -133,16 +152,16 @@ fn ahc_h17_das_d6() {
     assert_eq!(rules["decks"].as_u64().unwrap(), 6);
 
     let hands = json["hands"].as_object().unwrap();
-    assert_eq!(hands["total"].as_u64().unwrap(),        1_028_664);
-    assert_eq!(hands["won"].as_u64().unwrap(),          445_016);
-    assert_eq!(hands["lost"].as_u64().unwrap(),         495_504);
-    assert_eq!(hands["push"].as_u64().unwrap(),         88_144);
-    assert_eq!(hands["busted"].as_u64().unwrap(),       159_976);
-    assert_eq!(hands["blackjack"].as_u64().unwrap(),    47_048);
-    assert_eq!(hands["doubled"].as_u64().unwrap(),      108_584);
-    assert_eq!(hands["split"].as_u64().unwrap(),        54_096);
-    assert_eq!(hands["surrender"].as_u64().unwrap(),    0);
-    assert_eq!(hands["insured"].as_u64().unwrap(),      0);
+    assert_eq!(hands["total"].as_u64().unwrap(), 1_028_664);
+    assert_eq!(hands["won"].as_u64().unwrap(), 445_016);
+    assert_eq!(hands["lost"].as_u64().unwrap(), 495_504);
+    assert_eq!(hands["push"].as_u64().unwrap(), 88_144);
+    assert_eq!(hands["busted"].as_u64().unwrap(), 159_976);
+    assert_eq!(hands["blackjack"].as_u64().unwrap(), 47_048);
+    assert_eq!(hands["doubled"].as_u64().unwrap(), 108_584);
+    assert_eq!(hands["split"].as_u64().unwrap(), 54_096);
+    assert_eq!(hands["surrender"].as_u64().unwrap(), 0);
+    assert_eq!(hands["insured"].as_u64().unwrap(), 0);
 
     let distrib = json["winning_distrib"].as_object().unwrap();
     assert_eq!(distrib.len(), 15);
@@ -166,13 +185,19 @@ fn ahc_h17_das_d6() {
 #[test]
 fn ahc_s17_nodas_d6() {
     let json = run_freebj(&[
-        "-n", "1M", "-j8",
-        "--ahc", "--s17", "--no-das", "-d6",
-        "--shoe-file", "rc/shoe_1M",
+        "-n",
+        "1M",
+        "-j8",
+        "--ahc",
+        "--s17",
+        "--no-das",
+        "-d6",
+        "--shoe-file",
+        "rc/shoe_1M",
     ]);
 
-    assert_eq!(json["rounds"].as_u64().unwrap(),    1_000_000);
-    assert_f64_eq(json["ev"].as_f64().unwrap(),     -0.01004000, 10e-8);
+    assert_eq!(json["rounds"].as_u64().unwrap(), 1_000_000);
+    assert_f64_eq(json["ev"].as_f64().unwrap(), -0.01004000, 10e-8);
     assert_f64_eq(json["stddev"].as_f64().unwrap(), 1.13434055, 10e-8);
 
     let rules = json["rules"].as_object().unwrap();
@@ -186,16 +211,16 @@ fn ahc_s17_nodas_d6() {
     assert_eq!(rules["decks"].as_u64().unwrap(), 6);
 
     let hands = json["hands"].as_object().unwrap();
-    assert_eq!(hands["total"].as_u64().unwrap(),        1_025_104);
-    assert_eq!(hands["won"].as_u64().unwrap(),          444_416);
-    assert_eq!(hands["lost"].as_u64().unwrap(),         491_992);
-    assert_eq!(hands["push"].as_u64().unwrap(),         88_696);
-    assert_eq!(hands["busted"].as_u64().unwrap(),       160_288);
-    assert_eq!(hands["blackjack"].as_u64().unwrap(),    47_304);
-    assert_eq!(hands["doubled"].as_u64().unwrap(),      95_192);
-    assert_eq!(hands["split"].as_u64().unwrap(),        47_632);
-    assert_eq!(hands["surrender"].as_u64().unwrap(),    0);
-    assert_eq!(hands["insured"].as_u64().unwrap(),      0);
+    assert_eq!(hands["total"].as_u64().unwrap(), 1_025_104);
+    assert_eq!(hands["won"].as_u64().unwrap(), 444_416);
+    assert_eq!(hands["lost"].as_u64().unwrap(), 491_992);
+    assert_eq!(hands["push"].as_u64().unwrap(), 88_696);
+    assert_eq!(hands["busted"].as_u64().unwrap(), 160_288);
+    assert_eq!(hands["blackjack"].as_u64().unwrap(), 47_304);
+    assert_eq!(hands["doubled"].as_u64().unwrap(), 95_192);
+    assert_eq!(hands["split"].as_u64().unwrap(), 47_632);
+    assert_eq!(hands["surrender"].as_u64().unwrap(), 0);
+    assert_eq!(hands["insured"].as_u64().unwrap(), 0);
 
     let distrib = json["winning_distrib"].as_object().unwrap();
     assert_eq!(distrib.len(), 10);
@@ -214,13 +239,19 @@ fn ahc_s17_nodas_d6() {
 #[test]
 fn enhc_s17_das_d6() {
     let json = run_freebj(&[
-        "-n", "1M", "-j8",
-        "--enhc", "--s17", "--das", "-d6",
-        "--shoe-file", "rc/shoe_1M",
+        "-n",
+        "1M",
+        "-j8",
+        "--enhc",
+        "--s17",
+        "--das",
+        "-d6",
+        "--shoe-file",
+        "rc/shoe_1M",
     ]);
 
-    assert_eq!(json["rounds"].as_u64().unwrap(),    1_000_000);
-    assert_f64_eq(json["ev"].as_f64().unwrap(),     -0.00860400, 10e-8);
+    assert_eq!(json["rounds"].as_u64().unwrap(), 1_000_000);
+    assert_f64_eq(json["ev"].as_f64().unwrap(), -0.00860400, 10e-8);
     assert_f64_eq(json["stddev"].as_f64().unwrap(), 1.13752418, 10e-8);
 
     let rules = json["rules"].as_object().unwrap();
@@ -234,16 +265,16 @@ fn enhc_s17_das_d6() {
     assert_eq!(rules["decks"].as_u64().unwrap(), 6);
 
     let hands = json["hands"].as_object().unwrap();
-    assert_eq!(hands["total"].as_u64().unwrap(),        1_026_992);
-    assert_eq!(hands["won"].as_u64().unwrap(),          446_408);
-    assert_eq!(hands["lost"].as_u64().unwrap(),         493_480);
-    assert_eq!(hands["push"].as_u64().unwrap(),         87_104);
-    assert_eq!(hands["busted"].as_u64().unwrap(),       179_240);
-    assert_eq!(hands["blackjack"].as_u64().unwrap(),    47_000);
-    assert_eq!(hands["doubled"].as_u64().unwrap(),      88_960);
-    assert_eq!(hands["split"].as_u64().unwrap(),        50_648);
-    assert_eq!(hands["surrender"].as_u64().unwrap(),    0);
-    assert_eq!(hands["insured"].as_u64().unwrap(),      0);
+    assert_eq!(hands["total"].as_u64().unwrap(), 1_026_992);
+    assert_eq!(hands["won"].as_u64().unwrap(), 446_408);
+    assert_eq!(hands["lost"].as_u64().unwrap(), 493_480);
+    assert_eq!(hands["push"].as_u64().unwrap(), 87_104);
+    assert_eq!(hands["busted"].as_u64().unwrap(), 179_240);
+    assert_eq!(hands["blackjack"].as_u64().unwrap(), 47_000);
+    assert_eq!(hands["doubled"].as_u64().unwrap(), 88_960);
+    assert_eq!(hands["split"].as_u64().unwrap(), 50_648);
+    assert_eq!(hands["surrender"].as_u64().unwrap(), 0);
+    assert_eq!(hands["insured"].as_u64().unwrap(), 0);
 
     let distrib = json["winning_distrib"].as_object().unwrap();
     assert_eq!(distrib.len(), 15);

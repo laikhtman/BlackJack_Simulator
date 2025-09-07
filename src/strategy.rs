@@ -1,6 +1,6 @@
 use crate::card::Card;
-use crate::hand::Hand;
 use crate::game_rules::GameRules;
+use crate::hand::Hand;
 
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum Decision {
@@ -19,10 +19,10 @@ pub enum Decision {
 /// known information (e.g. true count, dealer's holecard), and the game rules.
 pub struct GameContext<'a> {
     /// The current game rules at the table
-    pub rules:      &'a GameRules,
+    pub rules: &'a GameRules,
 
     /// Whether the player may split its pair or not
-    pub may_split:  bool,
+    pub may_split: bool,
 
     /// Whether the player may double down on his hand
     pub may_double: bool,
@@ -31,7 +31,7 @@ pub struct GameContext<'a> {
     pub true_count: f32,
 
     /// The dealer's holecard if it is known (see holecarding option)
-    pub holecard:   Option<Card>,
+    pub holecard: Option<Card>,
 }
 
 pub trait Strategy {

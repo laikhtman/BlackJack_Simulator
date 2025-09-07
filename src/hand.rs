@@ -1,49 +1,54 @@
 use crate::card::Card;
 use arrayvec::ArrayVec;
+use std::fmt::{Debug, Display, Formatter};
 use std::ops::Index;
-use std::fmt::Debug;
-use bitflags::_core::fmt::{Display, Formatter};
 
 #[derive(Debug)]
 pub struct Hand {
-    cards:          ArrayVec<Card, 16>,
-    value:          u8,
-    is_soft:        bool,
-    is_busted:      bool,
+    cards: ArrayVec<Card, 16>,
+    value: u8,
+    is_soft: bool,
+    is_busted: bool,
 
     /// Owner's ID, useful when a player has many split hands
-    pub id:         u8,
+    pub id: u8,
 
     /// The bet associated with the hand
-    pub bet:        f64,
+    pub bet: f64,
 
     /// Whether this hand was doubled down
-    doubled:        bool,
+    doubled: bool,
 
     /// Whether this hand is the result of a pair split
-    split:          bool,
+    split: bool,
 
     /// Whether this hand was surrendered or not
-    surrendered:    bool,
+    surrendered: bool,
 
     /// Whether this hand was insured or not
-    insured:        bool,
+    insured: bool,
+}
+
+impl Default for Hand {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Hand {
     /// Creates an empty hand of cards
     pub fn new() -> Self {
         Self {
-            cards:      ArrayVec::new(),
-            value:      0,
-            is_soft:    false,
-            is_busted:  false,
-            id:         0,
-            bet:        1.0,
-            doubled:    false,
-            split:      false,
+            cards: ArrayVec::new(),
+            value: 0,
+            is_soft: false,
+            is_busted: false,
+            id: 0,
+            bet: 1.0,
+            doubled: false,
+            split: false,
             surrendered: false,
-            insured:    false,
+            insured: false,
         }
     }
 
@@ -79,7 +84,7 @@ impl Hand {
         self.cards.push(card);
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=&Card> {
+    pub fn iter(&self) -> impl Iterator<Item = &Card> {
         self.cards.iter()
     }
 
@@ -137,18 +142,30 @@ impl Hand {
     }
 
     /// Returns whether the hand is busted or not
-    pub fn is_busted(&self) -> bool { self.is_busted }
+    pub fn is_busted(&self) -> bool {
+        self.is_busted
+    }
 
     /// Returns whether the hand is soft
-    pub fn is_soft(&self) -> bool { self.is_soft }
+    pub fn is_soft(&self) -> bool {
+        self.is_soft
+    }
 
-    pub fn is_doubled(&self) -> bool { self.doubled }
+    pub fn is_doubled(&self) -> bool {
+        self.doubled
+    }
 
-    pub fn is_split(&self) -> bool { self.split }
+    pub fn is_split(&self) -> bool {
+        self.split
+    }
 
-    pub fn is_surrendered(&self) -> bool { self.surrendered }
+    pub fn is_surrendered(&self) -> bool {
+        self.surrendered
+    }
 
-    pub fn is_insured(&self) -> bool { self.insured }
+    pub fn is_insured(&self) -> bool {
+        self.insured
+    }
 }
 
 impl Index<usize> for Hand {
@@ -192,10 +209,18 @@ impl Display for Hand {
 
         write!(f, "] = {}", self.value)?;
 
-        if self.doubled { write!(f, ", doubled")?; }
-        if self.split { write!(f, ", split")?; }
-        if self.insured { write!(f, ", insured")?; }
-        if self.surrendered { write!(f, ", surrendered")?; }
+        if self.doubled {
+            write!(f, ", doubled")?;
+        }
+        if self.split {
+            write!(f, ", split")?;
+        }
+        if self.insured {
+            write!(f, ", insured")?;
+        }
+        if self.surrendered {
+            write!(f, ", surrendered")?;
+        }
 
         Ok(())
     }
@@ -203,8 +228,8 @@ impl Display for Hand {
 
 #[cfg(test)]
 mod tests {
-    use crate::hand::Hand;
     use crate::card::Card;
+    use crate::hand::Hand;
 
     #[test]
     fn it_returns_the_number_of_cards() {
@@ -255,46 +280,46 @@ mod tests {
 
     #[test]
     fn it_returns_the_value_of_hard_hands() {
-        test_hand(&[10, 5],         15, Some(false), None, None);
-        test_hand(&[7, 2, 2, 8],    19, Some(false), None, None);
-        test_hand(&[10, 10, 10],    30, Some(false), None, None);
+        test_hand(&[10, 5], 15, Some(false), None, None);
+        test_hand(&[7, 2, 2, 8], 19, Some(false), None, None);
+        test_hand(&[10, 10, 10], 30, Some(false), None, None);
     }
 
     #[test]
     fn it_handles_soft_hands() {
-        test_hand(&[1, 8],      19, Some(true), None, None);
-        test_hand(&[1, 2, 4],   17, Some(true), None, None);
-        test_hand(&[1, 1],      12, Some(true), None, None);
-        test_hand(&[5, 1],      16, Some(true), None, None);
-        test_hand(&[1, 10],     21, Some(true), None, None);
-        test_hand(&[10, 1],     21, Some(true), None, None);
-        test_hand(&[2, 8, 1],   21, Some(true), None, None);
-        test_hand(&[1, 3, 7],   21, Some(true), None, None);
+        test_hand(&[1, 8], 19, Some(true), None, None);
+        test_hand(&[1, 2, 4], 17, Some(true), None, None);
+        test_hand(&[1, 1], 12, Some(true), None, None);
+        test_hand(&[5, 1], 16, Some(true), None, None);
+        test_hand(&[1, 10], 21, Some(true), None, None);
+        test_hand(&[10, 1], 21, Some(true), None, None);
+        test_hand(&[2, 8, 1], 21, Some(true), None, None);
+        test_hand(&[1, 3, 7], 21, Some(true), None, None);
     }
 
     #[test]
     fn it_handles_hard_hands_with_aces() {
-        test_hand(&[10, 8, 1],          19, Some(false), None, None);
-        test_hand(&[10, 8, 1, 1, 1],    21, Some(false), None, None);
-        test_hand(&[1, 7, 4],           12, Some(false), None, None);
-        test_hand(&[5, 1, 4, 7],        17, Some(false), None, None);
+        test_hand(&[10, 8, 1], 19, Some(false), None, None);
+        test_hand(&[10, 8, 1, 1, 1], 21, Some(false), None, None);
+        test_hand(&[1, 7, 4], 12, Some(false), None, None);
+        test_hand(&[5, 1, 4, 7], 17, Some(false), None, None);
     }
 
     #[test]
     fn it_detects_busted_hands() {
-        test_hand(&[10, 6, 6],      22, None, Some(true), None);
-        test_hand(&[1, 6, 6, 9],    22, None, Some(true), None);
-        test_hand(&[7, 7, 7, 1],    22, None, Some(true), None);
-        test_hand(&[10, 7],         17, None, Some(false), None);
-        test_hand(&[10, 1],         21, None, Some(false), None);
-        test_hand(&[7, 7, 7],       21, None, Some(false), None);
+        test_hand(&[10, 6, 6], 22, None, Some(true), None);
+        test_hand(&[1, 6, 6, 9], 22, None, Some(true), None);
+        test_hand(&[7, 7, 7, 1], 22, None, Some(true), None);
+        test_hand(&[10, 7], 17, None, Some(false), None);
+        test_hand(&[10, 1], 21, None, Some(false), None);
+        test_hand(&[7, 7, 7], 21, None, Some(false), None);
     }
 
     #[test]
     fn it_detects_blackjacks() {
-        test_hand(&[1, 10],     21, Some(true), Some(false), Some(true));
-        test_hand(&[10, 1],     21, Some(true), Some(false), Some(true));
-        test_hand(&[7, 7, 7],   21, Some(false), Some(false), Some(false));
+        test_hand(&[1, 10], 21, Some(true), Some(false), Some(true));
+        test_hand(&[10, 1], 21, Some(true), Some(false), Some(true));
+        test_hand(&[7, 7, 7], 21, Some(false), Some(false), Some(false));
     }
 
     #[test]
@@ -354,11 +379,13 @@ mod tests {
         assert!(!new.insured);
     }
 
-    fn test_hand(cards: &[u8],
-                 value: u8,
-                 is_soft: Option<bool>,
-                 is_busted: Option<bool>,
-                 is_bj: Option<bool>) {
+    fn test_hand(
+        cards: &[u8],
+        value: u8,
+        is_soft: Option<bool>,
+        is_busted: Option<bool>,
+        is_bj: Option<bool>,
+    ) {
         let mut hand = Hand::new();
         for card in cards {
             hand.add(Card(*card));
@@ -367,26 +394,32 @@ mod tests {
         assert_eq!(hand.value(), value, "{:?}", hand);
 
         match is_soft {
-            Some(true) => assert!(hand.is_soft(),
-                                  "Expected SOFT hand: {:?}", hand),
-            Some(false) => assert!(!hand.is_soft(),
-                                   "Expected HARD hand: {:?}", hand),
+            Some(true) => {
+                assert!(hand.is_soft(), "Expected SOFT hand: {:?}", hand)
+            }
+            Some(false) => {
+                assert!(!hand.is_soft(), "Expected HARD hand: {:?}", hand)
+            }
             None => (),
         }
 
         match is_busted {
-            Some(true) => assert!(hand.is_busted(),
-                                  "Expected BUSTED: {:?}", hand),
-            Some(false) => assert!(!hand.is_busted(),
-                                   "Expected not BUSTED: {:?}", hand),
+            Some(true) => {
+                assert!(hand.is_busted(), "Expected BUSTED: {:?}", hand)
+            }
+            Some(false) => {
+                assert!(!hand.is_busted(), "Expected not BUSTED: {:?}", hand)
+            }
             None => (),
         }
 
         match is_bj {
-            Some(true) => assert!(hand.is_bj(),
-                                  "Expected BLACKJACK: {:?}", hand),
-            Some(false) => assert!(!hand.is_bj(),
-                                   "Expected not BLACKJACK: {:?}", hand),
+            Some(true) => {
+                assert!(hand.is_bj(), "Expected BLACKJACK: {:?}", hand)
+            }
+            Some(false) => {
+                assert!(!hand.is_bj(), "Expected not BLACKJACK: {:?}", hand)
+            }
             None => (),
         }
     }

@@ -41,35 +41,35 @@ pub enum DoublePolicy {
     /// Allow doubling-down on any hard hand of 9, 10, or 11
     Hard9To11,
     /// Allow doubling-down on any hard hand of 10 or 11
-    Hard10To11
+    Hard10To11,
 }
 
 #[derive(Serialize, Debug)]
 pub struct GameRules {
-    pub game_type:      GameType,
-    pub soft17:         Soft17,
-    pub das:            bool,
-    pub bj_pays:        f64,
-    pub double_down:    DoublePolicy,
-    pub surrender:      SurrenderPolicy,
+    pub game_type: GameType,
+    pub soft17: Soft17,
+    pub das: bool,
+    pub bj_pays: f64,
+    pub double_down: DoublePolicy,
+    pub surrender: SurrenderPolicy,
     pub play_ace_pairs: bool,
-    pub max_splits:     u32,
-    pub decks:          u32,
+    pub max_splits: u32,
+    pub decks: u32,
     pub penetration_cards: u32,
 }
 
 impl Default for GameRules {
     fn default() -> Self {
         GameRules {
-            game_type:      GameType::Ahc,
-            soft17:         Soft17::S17,
-            das:            true,
-            bj_pays:        1.5,
-            double_down:    DoublePolicy::AnyTwo,
-            surrender:      SurrenderPolicy::NoSurrender,
+            game_type: GameType::Ahc,
+            soft17: Soft17::S17,
+            das: true,
+            bj_pays: 1.5,
+            double_down: DoublePolicy::AnyTwo,
+            surrender: SurrenderPolicy::NoSurrender,
             play_ace_pairs: false,
-            max_splits:     4,
-            decks:          6,
+            max_splits: 4,
+            decks: 6,
             penetration_cards: 5 * 52,
         }
     }

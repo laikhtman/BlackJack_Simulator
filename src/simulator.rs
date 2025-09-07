@@ -1,13 +1,12 @@
-use std::ops::AddAssign;
 use std::collections::BTreeMap;
+use std::ops::AddAssign;
 
 use crate::hand_stats::HandStats;
-use crate::shoe::CardShoe;
 use crate::round_factory::RoundFactory;
 use crate::running_stats::RunningStats;
+use crate::shoe::CardShoe;
 
-pub struct Simulator<'a>
-{
+pub struct Simulator<'a> {
     round_count: u64,
     shoe: Box<dyn CardShoe>,
     round_factory: &'a RoundFactory<'a>,
@@ -35,15 +34,16 @@ impl AddAssign for SimulationResult {
     }
 }
 
-impl<'a> Simulator<'a>
-{
-    pub fn new(round_count: u64,
-               shoe: Box<dyn CardShoe>,
-               round_factory: &'a RoundFactory<'a>,
-               force_tc: Option<f32>,
-               adjust_rc: Option<i32>,
-               verbose: bool,
-               print_progress: bool) -> Simulator<'a> {
+impl<'a> Simulator<'a> {
+    pub fn new(
+        round_count: u64,
+        shoe: Box<dyn CardShoe>,
+        round_factory: &'a RoundFactory<'a>,
+        force_tc: Option<f32>,
+        adjust_rc: Option<i32>,
+        verbose: bool,
+        print_progress: bool,
+    ) -> Simulator<'a> {
         Simulator {
             round_count,
             shoe,

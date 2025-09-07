@@ -1,7 +1,7 @@
-use std::fmt;
 use rand::rngs::SmallRng;
-use rand::{SeedableRng, Rng};
 use rand::seq::SliceRandom;
+use rand::{Rng, SeedableRng};
+use std::fmt;
 
 use crate::card::Card;
 use crate::shoe::CardShoe;
@@ -28,7 +28,7 @@ impl StandardShoe {
             min_cards: (decks as usize * 52) - pen_cards as usize,
             needs_reshuffle: false,
             running_count: 0,
-            rng: SmallRng::from_entropy(),
+            rng: SmallRng::from_os_rng(),
         };
         shoe.fill_cards();
 
@@ -68,18 +68,18 @@ impl StandardShoe {
     }
 
     fn remove_high_card(&mut self) -> Card {
-        let (card, card_alt) = if self.rng.gen_range(0..4) == 0 {
+        let (card, card_alt) = if self.rng.random_range(0..4) == 0 {
             (Card(1), Card(10))
         } else {
             (Card(10), Card(1))
         };
-        self.try_pick_first(card).or_else(|| {
-            self.try_pick_first(card_alt)
-        }).expect("Not enough high cards to reach desired true count")
+        self.try_pick_first(card)
+            .or_else(|| self.try_pick_first(card_alt))
+            .expect("Not enough high cards to reach desired true count")
     }
 
     fn remove_low_card(&mut self) -> Card {
-        let card_orig = self.rng.gen_range(2..7);
+        let card_orig = self.rng.random_range(2..7);
         let mut card = card_orig;
         loop {
             if let Some(c) = self.try_pick_first(Card(card)) {
@@ -122,8 +122,7 @@ impl CardShoe for StandardShoe {
         }
     }
 
-    fn reshuffle(&mut self)
-    {
+    fn reshuffle(&mut self) {
         self.cards.clear();
         self.fill_cards();
         self.cards.shuffle(&mut self.rng);
@@ -152,16 +151,16 @@ impl CardShoe for StandardShoe {
         }
 
         if (true_count - prev).abs() < (true_count - self.true_count()).abs() {
-            if true_count > 0.0 {
-                if let Some(card) = prev_card {
-                    self.cards.push(card);
-                    self.running_count -= 1;
-                }
-            } else if true_count < 0.0 {
-                if let Some(card) = prev_card {
-                    self.cards.push(card);
-                    self.running_count += 1;
-                }
+            if true_count > 0.0
+                && let Some(card) = prev_card
+            {
+                self.cards.push(card);
+                self.running_count -= 1;
+            } else if true_count < 0.0
+                && let Some(card) = prev_card
+            {
+                self.cards.push(card);
+                self.running_count += 1;
             }
         }
 
@@ -212,8 +211,8 @@ impl fmt::Display for StandardShoe {
 #[cfg(test)]
 mod tests {
     use crate::card::Card;
-    use crate::shoe::standard_shoe::StandardShoe;
     use crate::shoe::CardShoe;
+    use crate::shoe::standard_shoe::StandardShoe;
     use crate::test_utils::assert_f64_eq;
 
     #[test]
@@ -223,8 +222,10 @@ mod tests {
         assert_eq!(shoe.cards.len(), 52);
 
         for card in 1..=9 {
-            assert_eq!(shoe.cards.iter().filter(|&&c| c == Card(card))
-                           .count(), 4);
+            assert_eq!(
+                shoe.cards.iter().filter(|&&c| c == Card(card)).count(),
+                4
+            );
         }
 
         assert_eq!(shoe.cards.iter().filter(|&&c| c == Card(10)).count(), 16);
@@ -242,8 +243,10 @@ mod tests {
 
         for card in 1..=9 {
             let expected_count = if card == 5 { 0 } else { 4 };
-            assert_eq!(shoe.cards.iter().filter(|&&c| c == Card(card))
-                           .count(), expected_count);
+            assert_eq!(
+                shoe.cards.iter().filter(|&&c| c == Card(card)).count(),
+                expected_count
+            );
         }
 
         assert_eq!(shoe.cards.iter().filter(|&&c| c == Card(10)).count(), 16);
@@ -341,13 +344,19 @@ mod tests {
 
         assert_eq!(shoe.running_count(), -20);
         assert_eq!(shoe.true_count(), -32.5);
-        assert_eq!(shoe.cards.iter()
-                       .filter(|&&c| c == Card(10) || c == Card(1))
-                       .count(), 0);
+        assert_eq!(
+            shoe.cards
+                .iter()
+                .filter(|&&c| c == Card(10) || c == Card(1))
+                .count(),
+            0
+        );
     }
 
     #[test]
-    #[should_panic(expected = "Not enough high cards to reach desired true count")]
+    #[should_panic(
+        expected = "Not enough high cards to reach desired true count"
+    )]
     fn it_panics_trying_to_remove_too_much_high_cards() {
         let mut shoe = StandardShoe::non_shuffled(1, 52);
         shoe.force_true_count(-33.0);
@@ -361,13 +370,16 @@ mod tests {
 
         assert_eq!(shoe.running_count(), 20);
         assert_eq!(shoe.true_count(), 32.5);
-        assert_eq!(shoe.cards.iter()
-                       .filter(|&&c| c.0 >= 2 && c.0 <= 6)
-                       .count(), 0);
+        assert_eq!(
+            shoe.cards.iter().filter(|&&c| c.0 >= 2 && c.0 <= 6).count(),
+            0
+        );
     }
 
     #[test]
-    #[should_panic(expected = "Not enough low cards to reach desired true count")]
+    #[should_panic(
+        expected = "Not enough low cards to reach desired true count"
+    )]
     fn it_panics_trying_to_remove_too_much_low_cards() {
         let mut shoe = StandardShoe::non_shuffled(1, 52);
         shoe.force_true_count(33.0);
