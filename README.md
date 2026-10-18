@@ -1,3 +1,47 @@
+# COD Limassol Blackjack Research
+
+Research fork of [FreeBJ](https://github.com/kevin-lesenechal/freebj) for City of
+Dreams Mediterranean in Limassol. The project records the observed casino rules
+and adds Pair-Fect Pairs, COD 21+, exact side bet probabilities, and combined
+main/side wager simulations across up to six occupied boxes and three owned boxes.
+
+The casino uses a six-deck continuous shuffling machine, according to the project
+owner. The implemented reference restores and uniformly mixes all six decks
+between rounds. It does not reproduce an identified machine's internal process.
+Dealer settlement and doubling after splitting remain explicit scenario choices.
+
+## Project documents
+
+- [Casino rules and open questions](docs/casino-rules.md)
+- [Side bet definitions and probability results](docs/side-bets.md)
+- [Open source comparison and fork decision](docs/software-evaluation.md)
+- [Research methods and implementation plan](docs/research-plan.md)
+- [Sources and provenance](docs/sources.md)
+- [Development and command examples](docs/development.md)
+
+## Quick start
+
+Requires a Rust toolchain supporting edition 2024; CI uses Rust 1.90.0.
+
+```powershell
+cargo test --locked --all-targets
+cargo run --locked --release --bin cod-research -- exact
+cargo run --locked --release --bin cod-research -- hand 7H 7H 7H
+```
+
+For combined simulations, select the unconfirmed rules explicitly. This example
+is an ENHC scenario with doubling after splitting, not a claim about those casino rules:
+
+```powershell
+cargo run --locked --release --bin cod-research -- simulate --rounds 100000 --seed 42 --occupied-boxes 6 --owned-boxes 1,3,6 --table-minimum 50 --main-bet 50 --pair-fect-bet 5 --cod21-bet 5 --dealer-mode enhc-all-bets --double-after-split yes
+```
+
+The original CLI remains available as `cargo run --bin freebj -- --help`.
+Its defaults are general FreeBJ defaults, not the COD research model.
+Upstream attribution and the [MIT license](LICENSE) are retained.
+
+## Original FreeBJ documentation
+
 #  FreeBJ Blackjack simulator #
 
 FreeBJ is a free and open source Blackjack simulator used to make statistical

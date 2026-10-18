@@ -105,17 +105,20 @@ mod tests {
     use crate::shoe::file_shoe::FileShoe;
     use std::fs::File;
     use std::io::Write;
-    use std::path::Path;
 
     #[test]
     fn it_loads_a_file_shoe_text() {
-        let path = Path::new("/tmp/test_cards");
-        let mut file = File::create(path).expect("Couldn't create test file");
+        let path = std::env::temp_dir().join(format!(
+            "freebj-test-cards-{}-{}.txt", std::process::id(),
+            std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()
+        ));
+        let mut file = File::create_new(&path).expect("Couldn't create test file");
         file.write_all(b"16\t8 TA4\n")
             .expect("Couldn't write test file");
         drop(file);
 
-        let mut shoe = FileShoe::new(path).expect("Couldn't create FileShoe");
+        let mut shoe = FileShoe::new(&path).expect("Couldn't create FileShoe");
+        std::fs::remove_file(&path).expect("Couldn't remove test file");
 
         assert_eq!(shoe.pick(), Card(1));
         assert_eq!(shoe.pick(), Card(6));
