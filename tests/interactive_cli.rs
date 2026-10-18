@@ -75,7 +75,9 @@ fn runs_exports_and_loads_a_setup_without_changing_math() {
         pair_fect_eur_per_box: 5.0, cod_21_eur_per_box: 5.0,
         double_after_split: true, dealer_mode: DealerMode::EuropeanAllBetsLost,
     }).unwrap();
-    assert_eq!(saved, serde_json::to_value(expected).unwrap());
+    // Compare both results through the same JSON float encoding/decoding path.
+    let expected: serde_json::Value = serde_json::from_str(&serde_json::to_string(&expected).unwrap()).unwrap();
+    assert_eq!(saved, expected);
     let input = format!("5\n2\n{}\nyes\n0\n", profile.display());
     assert!(interact(&[], &input).contains("Setup loaded."));
     std::fs::remove_file(profile).unwrap();
