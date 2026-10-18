@@ -1,0 +1,169 @@
+{
+  "boxes": [
+    {
+      "box_number": 1,
+      "cod_21_plus": {
+        "approximate_95_percent_ci_mean_eur": [
+          -0.5173300406693279,
+          1.0773300406693287
+        ],
+        "mean_net_eur_per_round": 0.28000000000000047,
+        "sample_standard_deviation_eur": 12.864178445866134,
+        "standard_error_eur": 0.40680104115782056,
+        "total_net_eur": 280.00000000000045
+      },
+      "combined": {
+        "approximate_95_percent_ci_mean_eur": [
+          -5.205853808141102,
+          2.0058538081411
+        ],
+        "mean_net_eur_per_round": -1.600000000000001,
+        "sample_standard_deviation_eur": 58.17709664958001,
+        "standard_error_eur": 1.8397213306842353,
+        "total_net_eur": -1600.000000000001
+      },
+      "main_game": {
+        "approximate_95_percent_ci_mean_eur": [
+          -4.027456656936321,
+          2.6774566569363185
+        ],
+        "mean_net_eur_per_round": -0.6750000000000015,
+        "sample_standard_deviation_eur": 54.08876935159435,
+        "standard_error_eur": 1.7104370698654694,
+        "total_net_eur": -675.0000000000015
+      },
+      "pair_fect_pairs": {
+        "approximate_95_percent_ci_mean_eur": [
+          -2.313124126548935,
+          -0.09687587345106485
+        ],
+        "mean_net_eur_per_round": -1.2049999999999998,
+        "sample_standard_deviation_eur": 17.87855188815967,
+        "standard_error_eur": 0.5653694523208852,
+        "total_net_eur": -1204.9999999999998
+      }
+    },
+    {
+      "box_number": 3,
+      "cod_21_plus": {
+        "approximate_95_percent_ci_mean_eur": [
+          -1.5094487590958177,
+          -0.3305512409041813
+        ],
+        "mean_net_eur_per_round": -0.9199999999999995,
+        "sample_standard_deviation_eur": 9.510207360727952,
+        "standard_error_eur": 0.3007391628039889,
+        "total_net_eur": -919.9999999999994
+      },
+      "combined": {
+        "approximate_95_percent_ci_mean_eur": [
+          -1.8269070337218385,
+          5.906907033721849
+        ],
+        "mean_net_eur_per_round": 2.040000000000005,
+        "sample_standard_deviation_eur": 62.388947585135504,
+        "standard_error_eur": 1.9729117518988997,
+        "total_net_eur": 2040.000000000005
+      },
+      "main_game": {
+        "approximate_95_percent_ci_mean_eur": [
+          -1.0614640285570682,
+          5.911464028557075
+        ],
+        "mean_net_eur_per_round": 2.4250000000000034,
+        "sample_standard_deviation_eur": 56.250853624932034,
+        "standard_error_eur": 1.7788081778352407,
+        "total_net_eur": 2425.000000000003
+      },
+      "pair_fect_pairs": {
+        "approximate_95_percent_ci_mean_eur": [
+          -0.9523606151971481,
+          2.022360615197148
+        ],
+        "mean_net_eur_per_round": 0.5349999999999998,
+        "sample_standard_deviation_eur": 23.997179826797133,
+        "standard_error_eur": 0.7588574567332388,
+        "total_net_eur": 534.9999999999998
+      }
+    },
+    {
+      "box_number": 6,
+      "cod_21_plus": {
+        "approximate_95_percent_ci_mean_eur": [
+          -1.7688558043290858,
+          -0.541144195670915
+        ],
+        "mean_net_eur_per_round": -1.1550000000000005,
+        "sample_standard_deviation_eur": 9.903992329564076,
+        "standard_error_eur": 0.31319173690259466,
+        "total_net_eur": -1155.0000000000005
+      },
+      "combined": {
+        "approximate_95_percent_ci_mean_eur": [
+          -4.294910776133946,
+          3.0749107761339465
+        ],
+        "mean_net_eur_per_round": -0.6099999999999997,
+        "sample_standard_deviation_eur": 59.452607281031135,
+        "standard_error_eur": 1.880056518435687,
+        "total_net_eur": -609.9999999999997
+      },
+      "main_game": {
+        "approximate_95_percent_ci_mean_eur": [
+          -2.1879085023093543,
+          4.587908502309355
+        ],
+        "mean_net_eur_per_round": 1.2000000000000002,
+        "sample_standard_deviation_eur": 54.660751895649916,
+        "standard_error_eur": 1.7285247460762012,
+        "total_net_eur": 1200.0000000000002
+      },
+      "pair_fect_pairs": {
+        "approximate_95_percent_ci_mean_eur": [
+          -1.9320426521833551,
+          0.622042652183356
+        ],
+        "mean_net_eur_per_round": -0.6549999999999996,
+        "sample_standard_deviation_eur": 20.603895153477566,
+        "standard_error_eur": 0.6515523735629365,
+        "total_net_eur": -654.9999999999995
+      }
+    }
+  ],
+  "config": {
+    "cod_21_eur_per_box": 5.0,
+    "dealer_mode": "european_all_bets_lost",
+    "double_after_split": true,
+    "main_bet_eur_per_box": 50.0,
+    "occupied_boxes": 6,
+    "owned_boxes": [
+      1,
+      3,
+      6
+    ],
+    "pair_fect_eur_per_box": 5.0,
+    "rounds": 1000,
+    "seed": 42,
+    "table_minimum_eur": 50.0
+  },
+  "decks": 6,
+  "insurance": "declined",
+  "limitations": [
+    "CSM return delays and internal mixing are not modeled",
+    "Dealer mode and double after split are user supplied scenarios, not confirmed casino facts",
+    "Side bet limits and treatment of added split/double stakes at table maximum remain unconfirmed",
+    "All occupied boxes use the same strategy and fixed main wager; bankroll exhaustion is not modeled"
+  ],
+  "patron_combined": {
+    "approximate_95_percent_ci_mean_eur": [
+      -8.301090480997617,
+      7.961090480997625
+    ],
+    "mean_net_eur_per_round": -0.16999999999999563,
+    "sample_standard_deviation_eur": 131.1875805146252,
+    "standard_error_eur": 4.148515551529399,
+    "total_net_eur": -169.99999999999562
+  },
+  "shuffle_model": "uniform_full_pack_reset_between_rounds",
+  "strategy": "upstream_basic_strategy_without_counting_not_proven_cod_optimal"
+}

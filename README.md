@@ -18,6 +18,7 @@ Dealer settlement and doubling after splitting remain explicit scenario choices.
 - [Research methods and implementation plan](docs/research-plan.md)
 - [Sources and provenance](docs/sources.md)
 - [Development and command examples](docs/development.md)
+- [Validation and saved outputs](docs/validation.md)
 
 ## Quick start
 

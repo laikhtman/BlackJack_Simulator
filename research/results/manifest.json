@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-18",
+  "code_revision": "48729ff3a89b753ec355d84f5213eb43beaebaa0",
+  "upstream_revision": "91e9294d51e87ed36d124cfe058571dd9c05a342",
+  "rust_version": "1.90.0",
+  "ci_run": "https://github.com/laikhtman/BlackJack_Simulator/actions/runs/39149816865",
+  "artifact": "cod-research-windows-latest",
+  "binary_sha256": "0d7ca95f682376c9fe27d35c30fdca15d883459bcc69bb3564e05b68a936428a",
+  "commands": {
+    "side-bets-six-decks.json": ".\\artifacts\\windows\\cod-research.exe exact",
+    "smoke-six-boxes.json": ".\\artifacts\\windows\\cod-research.exe simulate --rounds 1000 --seed 42 --occupied-boxes 6 --owned-boxes 1,3,6 --table-minimum 50 --main-bet 50 --pair-fect-bet 5 --cod21-bet 5 --dealer-mode enhc-all-bets --double-after-split yes"
+  },
+  "smoke_is_not_a_casino_edge_estimate": true
+}

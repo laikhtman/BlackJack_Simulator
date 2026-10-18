@@ -1,0 +1,92 @@
+{
+  "cod_21_plus": {
+    "categories": {
+      "loss": {
+        "ordered_outcomes": 22936320,
+        "probability": 0.7625126662570911,
+        "profit_units": -1
+      },
+      "suited_21": {
+        "ordered_outcomes": 159408,
+        "probability": 0.005299482179473881,
+        "profit_units": 10
+      },
+      "suited_678": {
+        "ordered_outcomes": 5184,
+        "probability": 0.00017234088388532948,
+        "profit_units": 100
+      },
+      "suited_777": {
+        "ordered_outcomes": 480,
+        "probability": 0.00001595748924864162,
+        "profit_units": 200
+      },
+      "total_19": {
+        "ordered_outcomes": 2185920,
+        "probability": 0.07267040603831393,
+        "profit_units": 2
+      },
+      "total_20": {
+        "ordered_outcomes": 2265408,
+        "probability": 0.07531296625788898,
+        "profit_units": 2
+      },
+      "unsuited_21": {
+        "ordered_outcomes": 2437776,
+        "probability": 0.08104330064707618,
+        "profit_units": 3
+      },
+      "unsuited_678": {
+        "ordered_outcomes": 77760,
+        "probability": 0.002585113258279942,
+        "profit_units": 30
+      },
+      "unsuited_777": {
+        "ordered_outcomes": 11664,
+        "probability": 0.00038776698874199133,
+        "profit_units": 50
+      }
+    },
+    "expected_profit_per_unit": -0.05305386450495897,
+    "house_edge": 0.05305386450495897,
+    "return_to_player": 0.946946135495041,
+    "standard_deviation_units": 2.875534242498244
+  },
+  "covariance_per_unit_stake": 0.02262401184383687,
+  "decks": 6,
+  "model": "uniform_full_pack_without_replacement",
+  "ordered_outcomes": 30079920,
+  "pair_fect_pairs": {
+    "categories": {
+      "any_pair": {
+        "ordered_outcomes": 1160640,
+        "probability": 0.03858520900321544,
+        "profit_units": 5
+      },
+      "loss": {
+        "ordered_outcomes": 27855360,
+        "probability": 0.9260450160771704,
+        "profit_units": -1
+      },
+      "prime_pair": {
+        "ordered_outcomes": 580320,
+        "probability": 0.01929260450160772,
+        "profit_units": 10
+      },
+      "suited_pair": {
+        "ordered_outcomes": 477360,
+        "probability": 0.01586972305777409,
+        "profit_units": 30
+      },
+      "suited_three_of_a_kind": {
+        "ordered_outcomes": 6240,
+        "probability": 0.00020744736023234104,
+        "profit_units": 50
+      }
+    },
+    "expected_profit_per_unit": -0.05372886630017627,
+    "house_edge": 0.05372886630017627,
+    "return_to_player": 0.9462711336998237,
+    "standard_deviation_units": 4.314906494099491
+  }
+}
