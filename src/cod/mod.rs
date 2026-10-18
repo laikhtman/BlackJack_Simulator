@@ -1,5 +1,6 @@
 //! Research scenarios for COD Limassol. CSM internals remain an explicit assumption.
 pub mod side_bets;
+pub mod interactive;
 
 use crate::basic_strategy::BasicStrategy;
 use crate::betting::FixedBet;
@@ -11,19 +12,19 @@ use crate::shoe::CardShoe;
 use rand::SeedableRng;
 use rand::rngs::SmallRng;
 use rand::seq::SliceRandom;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use side_bets::{PhysicalCard, card_types, cod_21, pair_fect};
 use std::collections::{BTreeSet, VecDeque};
 use std::fmt;
 
-#[derive(Clone, Copy, Debug, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum DealerMode {
     AmericanPeek,
     EuropeanAllBetsLost,
 }
 
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SimulationConfig {
     pub rounds: u64,
     pub seed: u64,
@@ -161,7 +162,16 @@ pub struct SimulationReport {
 }
 
 pub fn simulate(config: SimulationConfig) -> Result<SimulationReport, &'static str> {
+    simulate_with_progress(config, |_, _| {})
+}
+
+/// Reports completed rounds without changing the RNG stream or round accounting.
+pub fn simulate_with_progress(
+    config: SimulationConfig,
+    mut progress: impl FnMut(u64, u64),
+) -> Result<SimulationReport, &'static str> {
     config.validate()?;
+    progress(0, config.rounds);
     let rules = GameRules {
         game_type: match config.dealer_mode {
             DealerMode::AmericanPeek => GameType::Ahc,
@@ -179,7 +189,8 @@ pub fn simulate(config: SimulationConfig) -> Result<SimulationReport, &'static s
     let mut by_box: Vec<[RunningStats; 4]> = (0..config.owned_boxes.len())
         .map(|_| std::array::from_fn(|_| RunningStats::default())).collect();
     let mut patron = RunningStats::default();
-    for _ in 0..config.rounds {
+    let progress_step = (config.rounds / 100).max(1);
+    for round in 0..config.rounds {
         shoe.begin_round();
         let result = {
             let (_, result) = Round::new(&rules, &strategy, &betting, &mut shoe,
@@ -202,6 +213,10 @@ pub fn simulate(config: SimulationConfig) -> Result<SimulationReport, &'static s
             round_net += combined;
         }
         patron.push(round_net);
+        let done = round + 1;
+        if done % progress_step == 0 || done == config.rounds {
+            progress(done, config.rounds);
+        }
     }
     let boxes = config.owned_boxes.iter().zip(by_box).map(|(&position, values)| BoxResult {
         box_number: position, main_game: stats(&values[0]), pair_fect_pairs: stats(&values[1]),

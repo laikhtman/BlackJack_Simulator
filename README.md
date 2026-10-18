@@ -22,7 +22,19 @@ Dealer settlement and doubling after splitting remain explicit scenario choices.
 
 ## Quick start
 
-Requires a Rust toolchain supporting edition 2024; CI uses Rust 1.90.0.
+On Windows, double-click **Launch Blackjack.cmd** in this folder. It opens the
+interactive terminal app with guided setup, readable results and report exports.
+The downloaded executable is at `artifacts/windows/cod-research.exe`.
+
+From PowerShell:
+
+```powershell
+.\artifacts\windows\cod-research.exe
+```
+
+See the [interactive app guide](docs/interactive-cli.md) for the menus and controls.
+No Rust installation is needed to use the executable. Building from source requires
+a Rust toolchain supporting edition 2024; CI uses Rust 1.90.0.
 
 ```powershell
 cargo test --locked --all-targets

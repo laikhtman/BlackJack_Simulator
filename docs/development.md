@@ -1,5 +1,9 @@
 # Development and research commands
 
+For guided usage, double-click `Launch Blackjack.cmd` or run the executable without
+arguments. See the [interactive app guide](interactive-cli.md). Original subcommands
+remain available for JSON output and automated experiments.
+
 ## Repository
 
 This directory is a full clone of the GitHub fork, including upstream history.

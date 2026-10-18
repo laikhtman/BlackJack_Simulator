@@ -10,8 +10,13 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
+    if std::env::args_os().len() == 1 {
+        return freebj::cod::interactive::launch().map_err(|e| e.to_string());
+    }
     let matches = App::new("cod-research")
         .about("COD Limassol research scenarios and exact side bet probabilities")
+        .subcommand(SubCommand::with_name("interactive")
+            .about("Open the guided menus, readable results, and saved setups"))
         .subcommand(SubCommand::with_name("exact")
             .about("Exact side bet probabilities for a uniformly mixed six-deck pack"))
         .subcommand(SubCommand::with_name("hand")
@@ -33,6 +38,7 @@ fn run() -> Result<(), String> {
                 .possible_values(&["yes", "no"])))
         .get_matches();
     let result = match matches.subcommand() {
+        ("interactive", _) => return freebj::cod::interactive::launch().map_err(|e| e.to_string()),
         ("exact", _) => serde_json::to_value(side_bets::exact_probabilities(6)?),
         ("hand", Some(args)) => {
             let cards: Result<Vec<_>, _> = args.values_of("cards").unwrap()
