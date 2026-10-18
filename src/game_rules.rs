@@ -25,6 +25,8 @@ pub enum SurrenderPolicy {
     NoSurrender,
     /// Allow early surrender
     EarlySurrender,
+    /// Early surrender against 2 through 10, but never against an ace.
+    EarlySurrenderExceptAce,
     /// Allow late surrender (AHC only)
     LateSurrender,
 }

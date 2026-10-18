@@ -5,6 +5,7 @@ extern crate crossbeam;
 pub mod basic_strategy;
 pub mod betting;
 pub mod card;
+pub mod cod;
 pub mod deviation;
 pub mod game_rules;
 pub mod hand;

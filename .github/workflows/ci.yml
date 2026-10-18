@@ -1,0 +1,23 @@
+name: Build and test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: 1.90.0
+      - run: cargo test --locked --all-targets
+      - run: cargo build --locked --release --bins
+      - run: cargo run --locked --release --bin cod-research -- exact
+      - run: cargo run --locked --release --bin cod-research -- simulate --rounds 1000 --occupied-boxes 6 --owned-boxes 1,3,6 --dealer-mode enhc-all-bets --double-after-split yes --pair-fect-bet 5 --cod21-bet 5

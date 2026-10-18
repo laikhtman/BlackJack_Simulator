@@ -8,7 +8,7 @@ use crate::card::Card;
 use crate::game_rules::GameRules;
 use crate::game_rules::GameType::{Ahc, Enhc};
 use crate::game_rules::Soft17::H17;
-use crate::game_rules::SurrenderPolicy::{EarlySurrender, LateSurrender};
+use crate::game_rules::SurrenderPolicy::{EarlySurrender, EarlySurrenderExceptAce, LateSurrender};
 use crate::hand::Hand;
 use crate::hand_logic::{hand_result, may_double};
 use crate::hand_stats::HandStats;
@@ -116,7 +116,7 @@ impl<'a> Round<'a> {
             }
         }
 
-        if self.rules.surrender == EarlySurrender {
+        if matches!(self.rules.surrender, EarlySurrender | EarlySurrenderExceptAce) {
             self.check_surrender();
         }
 
@@ -185,6 +185,10 @@ impl<'a> Round<'a> {
     }
 
     fn check_surrender(&mut self) {
+        // Enforce availability here, including when a caller forces surrender.
+        if self.rules.surrender == EarlySurrenderExceptAce && self.dealer[0] == Card(1) {
+            return;
+        }
         if self.surrender_override == Some(false) {
             return;
         }
@@ -200,7 +204,7 @@ impl<'a> Round<'a> {
                         &self.context,
                         self.dealer[0],
                         hand,
-                        self.rules.surrender == EarlySurrender,
+                        matches!(self.rules.surrender, EarlySurrender | EarlySurrenderExceptAce),
                     )
                 {
                     hand.surrender();
