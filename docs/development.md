@@ -14,6 +14,14 @@ upstream locations, with an additional `EarlySurrenderExceptAce` policy.
 
 ## Toolchain and checks
 
+Successful CI runs provide `cod-research-windows-latest` and
+`cod-research-ubuntu-latest` executable artifacts. The Windows artifact can be
+downloaded into `artifacts/windows`; it runs without a local Rust installation:
+
+```powershell
+.\artifacts\windows\cod-research.exe exact
+```
+
 Rust and Cargo were not found in the initial local environment. CI installs Rust
 1.90.0 and runs on Windows and Linux. With that toolchain available locally:
 

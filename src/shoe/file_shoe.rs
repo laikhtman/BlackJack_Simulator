@@ -18,7 +18,7 @@ impl FileShoe {
                 b'1'..=b'9' => Some(Card(n - b'0')),
                 b'T' => Some(Card(10)),
                 b'A' => Some(Card(1)),
-                b' ' | b'\n' | b'\t' => None,
+                b' ' | b'\n' | b'\r' | b'\t' => None,
                 _ => panic!("Invalid byte {n:#02x}"),
             })
             .collect();
@@ -113,7 +113,7 @@ mod tests {
             std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()
         ));
         let mut file = File::create_new(&path).expect("Couldn't create test file");
-        file.write_all(b"16\t8 TA4\n")
+        file.write_all(b"16\t8 TA4\r\n")
             .expect("Couldn't write test file");
         drop(file);
 
