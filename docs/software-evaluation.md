@@ -45,6 +45,10 @@ declines insurance under its current non-counting strategy. It reports all assum
 
 ## Further audit points
 
+An inherited multi-box defect assigned every initial hand owner ID zero, merging
+results and split budgets. The fork assigns an independent ID to each occupied
+box; fixed-card regressions cover six separate outcomes and two independent split budgets.
+
 The inherited basic strategy is not proven optimal for this exact finite-pack COD
 scenario. The original `freebj` CLI is separate and retains upstream defaults.
 Its `--bet-max-tc` parser appears to assign `bet_neg_tc` rather than `bet_max_tc`

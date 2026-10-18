@@ -53,8 +53,10 @@ impl<'a> Round<'a> {
         assert!(num_players > 0 && num_players < 8);
 
         let mut hands = ArrayVec::new();
-        for _ in 0..num_players {
-            hands.push(Hand::new());
+        for id in 0..num_players {
+            let mut hand = Hand::new();
+            hand.id = id;
+            hands.push(hand);
         }
 
         assert!(

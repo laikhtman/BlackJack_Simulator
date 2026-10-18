@@ -77,6 +77,32 @@ impl Strategy for StandAndInsure {
     fn take_insurance(&self, _: &GameContext, _: &Hand) -> bool { true }
 }
 
+struct StandOnly;
+impl Strategy for StandOnly {
+    fn player_turn(&self, _: &GameContext, _: Card, _: &Hand) -> Decision { Decision::Stand }
+}
+
+#[test]
+fn keeps_six_box_results_and_split_budgets_separate() {
+    let empty = VecDeque::new();
+    let rules = GameRules::default();
+    // First card for six boxes, dealer upcard, second card for six boxes, hole card.
+    let mut shoe = QueuedShoe::from_ints(&[10,10,10,10,10,10,10,10,9,8,7,6,5,8]);
+    let (_, result) = Round::new(&rules, &StandOnly, &FixedBet(50.0), &mut shoe,
+        6, false, None, None, &empty, &empty).run();
+    assert_eq!(result.player_results, [50.0,50.0,0.0,-50.0,-50.0,-50.0,0.0]);
+
+    let rules = GameRules { max_splits: 2, ..Default::default() };
+    let strategy = freebj::basic_strategy::BasicStrategy::new(false);
+    // Two boxes each split 8/8 to 18 and 18; dealer draws to 19.
+    let mut shoe = QueuedShoe::from_ints(&[8,8,6,8,8,10,10,10,10,10,3]);
+    let (_, result) = Round::new(&rules, &strategy, &FixedBet(50.0), &mut shoe,
+        2, false, None, None, &empty, &empty).run();
+    assert_eq!(result.player_results[0], -100.0);
+    assert_eq!(result.player_results[1], -100.0);
+    assert_eq!(result.hand_stats.split, 4);
+}
+
 #[test]
 fn early_surrender_survives_dealer_blackjack_but_is_forbidden_against_ace() {
     let rules = GameRules { surrender: SurrenderPolicy::EarlySurrenderExceptAce, ..Default::default() };

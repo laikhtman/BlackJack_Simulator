@@ -57,6 +57,8 @@ EUR return must not be labeled a house-edge percentage without stating its wager
   prohibits surrender even through the forced-action API. Insurance still works.
 - Fixed-seed runs reproduce results; owned totals reconcile; enabling side wagers
   leaves the sampled main play unchanged.
+- Fixed-card rounds check six independent box results and independent split budgets,
+  guarding against an inherited owner-ID bug fixed in this fork.
 - Opening limits, invalid money values, occupied positions and owned-box limits
   are checked. CI builds and tests on Windows and Linux.
 
