@@ -242,6 +242,7 @@ fn main() {
         .arg(Arg::with_name("holdout").long("holdout").takes_value(true).default_value("10000"))
         .arg(Arg::with_name("cap").long("max-rounds").takes_value(true).default_value("10000"))
         .arg(Arg::with_name("seed").long("seed").takes_value(true).default_value("20261018"))
+        .arg(Arg::with_name("validation").long("validation-only"))
         .get_matches();
     let parse = |name| args.value_of(name).unwrap().parse::<u64>().expect("Expected whole number");
     let count = parse("sessions"); let holdout = parse("holdout"); let cap = parse("cap"); let seed = parse("seed");
@@ -254,14 +255,24 @@ fn main() {
     };
     let mut rows = Vec::new();
     let policies = policies();
-    for (i,p) in policies.iter().enumerate() {
-        rows.push(experiment(p,&rules,count,cap,seed+i as u64*1_000_003,"screen"));
+    let validation = args.is_present("validation");
+    if !validation {
+        for (i,p) in policies.iter().enumerate() {
+            rows.push(experiment(p,&rules,count,cap,seed+i as u64*1_000_003,"screen"));
+        }
     }
-    let mut ranked: Vec<_> = rows.iter().filter(|r| r.policy.pair==0.0 && r.policy.total==0.0).collect();
-    ranked.sort_by(|a,b| b.probability_hit_by_cap.total_cmp(&a.probability_hit_by_cap));
-    let selected: Vec<_> = ranked.iter().take(3).map(|r| r.policy.clone()).collect();
+    let selected: Vec<Policy> = if validation {
+        policies.iter().filter(|p| p.pair==0.0 && p.total==0.0
+            && !p.martingale && p.fixed!=50.0 && p.fixed!=250.0).cloned().collect()
+    } else {
+        let mut ranked: Vec<_> = rows.iter().filter(|r| r.policy.pair==0.0 && r.policy.total==0.0).collect();
+        ranked.sort_by(|a,b| b.probability_hit_by_cap.total_cmp(&a.probability_hit_by_cap));
+        ranked.iter().take(3).map(|r| r.policy.clone()).collect()
+    };
     for (i,p) in selected.iter().enumerate() {
-        rows.push(experiment(p,&rules,holdout,cap,seed+1_000_000_007+i as u64*1_000_003,"holdout"));
+        let extra_seed = if validation {2_000_000_033} else {1_000_000_007};
+        rows.push(experiment(p,&rules,holdout,cap,seed+extra_seed+i as u64*1_000_003,
+            if validation {"validation"} else {"holdout"}));
     }
     println!("{}",serde_json::to_string_pretty(&serde_json::json!({
         "starting_bankroll_eur":10000, "target_eur":100000, "minimum_eur":50, "maximum_eur_per_box":2500,
@@ -269,7 +280,7 @@ fn main() {
         "model":"uniform_full_pack_reset_between_rounds_lazy_uniform_draws_without_replacement",
         "objective":"reach target after round settlement before bankroll below minimum, within max_rounds",
         "notes":[
-            "Screening selects candidates; only independent holdout results should be used for ranking",
+            "Screening selects candidates; only independent holdout/validation results should be used for ranking",
             "Intervals measure Monte Carlo uncertainty, not unknown casino rules or model error",
             "Unfinished sessions are not counted as ruin; eventual identification bounds exclude sampling uncertainty",
             "Policies use EUR 50 wager increments as a research grid, not a confirmed chip-increment rule",
@@ -300,5 +311,25 @@ mod tests {
             assert_eq!(a.ending,b.ending); assert_eq!(a.rounds,b.rounds); assert!(a.ending>=0.0);
         }
     }
+
+    #[test] fn extra_stakes_require_cash_and_surrender_refunds_can_fund_a_later_box() {
+        let rules=GameRules {surrender:SurrenderPolicy::EarlySurrenderExceptAce,..Default::default()};
+        let context=GameContext {rules:&rules,may_double:true,may_split:true,true_count:0.0,holecard:None};
+        let c=PhysicalCard::new(6,2).unwrap();
+        let s=FundedStrategy {base:BasicStrategy::new(false),
+            funds:RefCell::new(Funds{cash:0.0,sides_settled:false,side_net:0.0,unfunded:0}),
+            history:Rc::new(RefCell::new(vec![c;13])),occupied:6,owned:2,pair:0.0,total:0.0};
+        let mut pair=Hand::from(&[8,8][..]); pair.bet=50.0;
+        assert_eq!(s.player_turn(&context,Card(6),&pair),Decision::Stand);
+        assert_eq!(s.funds.borrow().cash,0.0);
+        s.funds.borrow_mut().cash=25.0;
+        let mut surrender=Hand::from(&[10,5][..]); surrender.bet=50.0;
+        assert!(s.surrender(&context,Card(10),&surrender,true));
+        assert_eq!(s.funds.borrow().cash,50.0);
+        let mut eleven=Hand::from(&[4,7][..]); eleven.id=1; eleven.bet=50.0;
+        assert_eq!(s.player_turn(&context,Card(6),&eleven),Decision::Double);
+        assert_eq!(s.funds.borrow().cash,0.0);
+    }
+
     #[test] fn zero_success_wilson_upper_is_not_zero() {assert!(wilson(0,500)[1]>0.0);}
 }

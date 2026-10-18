@@ -26,7 +26,7 @@ jobs:
       - name: Screen and independently validate named policies
         run: |
           mkdir -p study-results
-          target/release/cod-bankroll --dealer ${{ matrix.dealer }} --das ${{ matrix.das }} --sessions 500 --holdout 10000 --max-rounds 10000 > study-results/${{ matrix.dealer }}-${{ matrix.das }}.json
+          target/release/cod-bankroll --dealer ${{ matrix.dealer }} --das ${{ matrix.das }} --validation-only --holdout 50000 --max-rounds 10000 > study-results/${{ matrix.dealer }}-${{ matrix.das }}.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: bankroll-study-${{ matrix.dealer }}-${{ matrix.das }}
