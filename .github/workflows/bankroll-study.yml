@@ -1,0 +1,34 @@
+name: Bankroll target study
+on:
+  push:
+    paths:
+      - src/bin/cod-bankroll.rs
+      - .github/workflows/bankroll-study.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  study:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        dealer: [ahc, enhc]
+        das: ["yes", "no"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          toolchain: 1.90.0
+      - run: cargo test --locked --bin cod-bankroll
+      - run: cargo build --locked --release --bin cod-bankroll
+      - name: Screen and independently validate named policies
+        run: |
+          mkdir -p study-results
+          target/release/cod-bankroll --dealer ${{ matrix.dealer }} --das ${{ matrix.das }} --sessions 500 --holdout 10000 --max-rounds 10000 > study-results/${{ matrix.dealer }}-${{ matrix.das }}.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bankroll-study-${{ matrix.dealer }}-${{ matrix.das }}
+          path: study-results/*.json
+          if-no-files-found: error
