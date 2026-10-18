@@ -16,6 +16,7 @@ Dealer settlement and doubling after splitting remain explicit scenario choices.
 - [Side bet definitions and probability results](docs/side-bets.md)
 - [Open source comparison and fork decision](docs/software-evaluation.md)
 - [Research methods and implementation plan](docs/research-plan.md)
+- [EUR 10000 to EUR 100000 bankroll study](docs/bankroll-target-study.md)
 - [Sources and provenance](docs/sources.md)
 - [Development and command examples](docs/development.md)
 - [Validation and saved outputs](docs/validation.md)

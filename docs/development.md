@@ -83,3 +83,19 @@ alongside the report. Rare events require much more than a short smoke run.
 See [research plan](research-plan.md) for unfinished rule confirmation, exact main
 strategy, machine behavior and session bankroll work. Do not interpret the inherited
 strategy as a proven optimal COD strategy or the round reset model as actual machine firmware.
+
+## Funded bankroll target study
+
+The separate `cod-bankroll` runner models the EUR 10000 to EUR 100000 experiment,
+including actual funding of opening, split and double wagers. The interactive
+app's original round simulator remains unlimited-bankroll. Read the
+[study report](bankroll-target-study.md) for assumptions and results.
+
+```powershell
+cargo run --locked --release --bin cod-bankroll -- --dealer enhc --das no --validation-only --holdout 50000 --max-rounds 10000
+```
+
+Dealer and DAS selections are research scenarios; the real table rules are still
+unconfirmed. Study results and code changes for this experiment were saved through
+the connected GitHub repository because local process execution was unavailable.
+Synchronize the checkout before building this new binary.

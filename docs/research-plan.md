@@ -73,8 +73,10 @@ or fidelity to an unidentified shuffler.
    and non-split hand actions; validate split models and surrender timing separately.
 3. Derive and verify a COD-specific strategy against that reference.
 4. Add machine return models only with evidence about the actual procedure.
-5. Add session bankroll, exposure limits, bet increments and empirical ruin curves
-   for explicit horizons. These are not implemented by the current fixed-bet runner.
+5. Extend the separate funded `cod-bankroll` research runner into the interactive
+   app, with configurable starting bankrolls, targets, confirmed chip increments,
+   exposure limits and session curves. The interactive fixed-bet runner still uses
+   unlimited bankroll. See [the initial target study](bankroll-target-study.md).
 6. Extend to heterogeneous other-player strategies and wagers if needed.
 
 The completed first stage is documented rules, a reproducible fork, side bet

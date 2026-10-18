@@ -1,0 +1,658 @@
+{
+  "date": "2026-10-18",
+  "code_revision": "2e7922e6382eccaf11743103d80805ba52d8b535",
+  "run_url": "https://github.com/laikhtman/BlackJack_Simulator/actions/runs/39152825341",
+  "initial_screen_run": "https://github.com/laikhtman/BlackJack_Simulator/actions/runs/39152623436",
+  "source": "Successful workflow job summary lines; means rounded by original logger; full precision JSON is available in workflow artifacts",
+  "total_validation_sessions": 1600000,
+  "starting_bankroll_eur": 10000,
+  "target_eur": 100000,
+  "minimum_opening_main_bet_eur": 50,
+  "maximum_opening_main_bet_per_box_eur": 2500,
+  "occupied_boxes": 6,
+  "max_rounds": 10000,
+  "shuffle_model": "uniform six-deck pack reset between rounds; lazy draws without replacement within rounds",
+  "stopping": "At round settlement reach at least EUR 100000, or have less than EUR 50; censored if neither within 10000 rounds",
+  "playing_strategy": "Inherited expected-value basic strategy, with actions gated by actual available cash; not goal-optimal decision play",
+  "wager_grid": "EUR 50 increments, a research grid rather than a confirmed table increment rule",
+  "main_only_validation": true,
+  "scenarios": [
+    {
+      "dealer": "ahc",
+      "double_after_split": false,
+      "job_id": 117749793942,
+      "results": [
+        {
+          "policy": "flat_1000_one_box",
+          "sessions": 50000,
+          "hit": 3875,
+          "unplayable": 46078,
+          "unfinished": 47,
+          "hit_probability": 0.0775,
+          "hit_probability_95_wilson": [
+            0.075188649507791,
+            0.07987626615886151
+          ],
+          "eventual_probability_identification_interval": [
+            0.0775,
+            0.07844
+          ],
+          "mean_ending_eur_rounded": 7827.04,
+          "mean_rounds_rounded": 686.4,
+          "seed": 2020261051
+        },
+        {
+          "policy": "flat_2500_one_box",
+          "sessions": 50000,
+          "hit": 4455,
+          "unplayable": 45545,
+          "unfinished": 0,
+          "hit_probability": 0.0891,
+          "hit_probability_95_wilson": [
+            0.08663435527763741,
+            0.09162877808905495
+          ],
+          "eventual_probability_identification_interval": [
+            0.0891,
+            0.0891
+          ],
+          "mean_ending_eur_rounded": 8990.96,
+          "mean_rounds_rounded": 114.5,
+          "seed": 2021261054
+        },
+        {
+          "policy": "flat_2500_three_boxes",
+          "sessions": 50000,
+          "hit": 4447,
+          "unplayable": 45553,
+          "unfinished": 0,
+          "hit_probability": 0.08894,
+          "hit_probability_95_wilson": [
+            0.08647639115135329,
+            0.0914667667987868
+          ],
+          "eventual_probability_identification_interval": [
+            0.08894,
+            0.08894
+          ],
+          "mean_ending_eur_rounded": 9179.22,
+          "mean_rounds_rounded": 28.2,
+          "seed": 2022261057
+        },
+        {
+          "policy": "fraction_5_percent_one_box",
+          "sessions": 50000,
+          "hit": 3790,
+          "unplayable": 45945,
+          "unfinished": 265,
+          "hit_probability": 0.0758,
+          "hit_probability_95_wilson": [
+            0.07351248772186898,
+            0.07815268914391564
+          ],
+          "eventual_probability_identification_interval": [
+            0.0758,
+            0.0811
+          ],
+          "mean_ending_eur_rounded": 7643.94,
+          "mean_rounds_rounded": 2615.1,
+          "seed": 2023261060
+        },
+        {
+          "policy": "fraction_10_percent_one_box",
+          "sessions": 50000,
+          "hit": 4367,
+          "unplayable": 45633,
+          "unfinished": 0,
+          "hit_probability": 0.08734,
+          "hit_probability_95_wilson": [
+            0.08489688459276354,
+            0.0898465191918538
+          ],
+          "eventual_probability_identification_interval": [
+            0.08734,
+            0.08734
+          ],
+          "mean_ending_eur_rounded": 8788.02,
+          "mean_rounds_rounded": 802.3,
+          "seed": 2024261063
+        },
+        {
+          "policy": "fraction_25_percent_one_box",
+          "sessions": 50000,
+          "hit": 4502,
+          "unplayable": 45498,
+          "unfinished": 0,
+          "hit_probability": 0.09004,
+          "hit_probability_95_wilson": [
+            0.08756244330726445,
+            0.0925805456316725
+          ],
+          "eventual_probability_identification_interval": [
+            0.09004,
+            0.09004
+          ],
+          "mean_ending_eur_rounded": 9057.12,
+          "mean_rounds_rounded": 220.8,
+          "seed": 2025261066
+        },
+        {
+          "policy": "max_with_target_gap_1_boxes",
+          "sessions": 50000,
+          "hit": 4433,
+          "unplayable": 45567,
+          "unfinished": 0,
+          "hit_probability": 0.08866,
+          "hit_probability_95_wilson": [
+            0.08619995978402824,
+            0.09118324118714537
+          ],
+          "eventual_probability_identification_interval": [
+            0.08866,
+            0.08866
+          ],
+          "mean_ending_eur_rounded": 8904.77,
+          "mean_rounds_rounded": 114,
+          "seed": 2026261069
+        },
+        {
+          "policy": "max_with_target_gap_3_boxes",
+          "sessions": 50000,
+          "hit": 4443,
+          "unplayable": 45557,
+          "unfinished": 0,
+          "hit_probability": 0.08886,
+          "hit_probability_95_wilson": [
+            0.08639740999954575,
+            0.09138576024231819
+          ],
+          "eventual_probability_identification_interval": [
+            0.08886,
+            0.08886
+          ],
+          "mean_ending_eur_rounded": 8973.42,
+          "mean_rounds_rounded": 27.9,
+          "seed": 2027261072
+        }
+      ]
+    },
+    {
+      "dealer": "enhc",
+      "double_after_split": false,
+      "job_id": 117749794137,
+      "results": [
+        {
+          "policy": "flat_1000_one_box",
+          "sessions": 50000,
+          "hit": 3474,
+          "unplayable": 46476,
+          "unfinished": 50,
+          "hit_probability": 0.06948,
+          "hit_probability_95_wilson": [
+            0.06728419242207757,
+            0.07174195548989222
+          ],
+          "eventual_probability_identification_interval": [
+            0.06948,
+            0.07048
+          ],
+          "mean_ending_eur_rounded": 7028.77,
+          "mean_rounds_rounded": 678.1,
+          "seed": 2020261051
+        },
+        {
+          "policy": "flat_2500_one_box",
+          "sessions": 50000,
+          "hit": 4420,
+          "unplayable": 45580,
+          "unfinished": 0,
+          "hit_probability": 0.0884,
+          "hit_probability_95_wilson": [
+            0.08594328020905272,
+            0.09091996071022344
+          ],
+          "eventual_probability_identification_interval": [
+            0.0884,
+            0.0884
+          ],
+          "mean_ending_eur_rounded": 8917.61,
+          "mean_rounds_rounded": 117.9,
+          "seed": 2021261054
+        },
+        {
+          "policy": "flat_2500_three_boxes",
+          "sessions": 50000,
+          "hit": 4251,
+          "unplayable": 45749,
+          "unfinished": 0,
+          "hit_probability": 0.08502,
+          "hit_probability_95_wilson": [
+            0.08260704439685256,
+            0.08749671584775683
+          ],
+          "eventual_probability_identification_interval": [
+            0.08502,
+            0.08502
+          ],
+          "mean_ending_eur_rounded": 8771.09,
+          "mean_rounds_rounded": 28.5,
+          "seed": 2022261057
+        },
+        {
+          "policy": "fraction_5_percent_one_box",
+          "sessions": 50000,
+          "hit": 3622,
+          "unplayable": 46137,
+          "unfinished": 241,
+          "hit_probability": 0.07244,
+          "hit_probability_95_wilson": [
+            0.07020061799957203,
+            0.07474507511861483
+          ],
+          "eventual_probability_identification_interval": [
+            0.07244,
+            0.07726
+          ],
+          "mean_ending_eur_rounded": 7305.07,
+          "mean_rounds_rounded": 2610.5,
+          "seed": 2023261060
+        },
+        {
+          "policy": "fraction_10_percent_one_box",
+          "sessions": 50000,
+          "hit": 4161,
+          "unplayable": 45839,
+          "unfinished": 0,
+          "hit_probability": 0.08322,
+          "hit_probability_95_wilson": [
+            0.08083081762509058,
+            0.08567321918330574
+          ],
+          "eventual_probability_identification_interval": [
+            0.08322,
+            0.08322
+          ],
+          "mean_ending_eur_rounded": 8371.69,
+          "mean_rounds_rounded": 814.3,
+          "seed": 2024261063
+        },
+        {
+          "policy": "fraction_25_percent_one_box",
+          "sessions": 50000,
+          "hit": 4264,
+          "unplayable": 45736,
+          "unfinished": 0,
+          "hit_probability": 0.08528,
+          "hit_probability_95_wilson": [
+            0.08286363774789007,
+            0.08776008254861672
+          ],
+          "eventual_probability_identification_interval": [
+            0.08528,
+            0.08528
+          ],
+          "mean_ending_eur_rounded": 8575.43,
+          "mean_rounds_rounded": 223.9,
+          "seed": 2025261066
+        },
+        {
+          "policy": "max_with_target_gap_1_boxes",
+          "sessions": 50000,
+          "hit": 4316,
+          "unplayable": 45684,
+          "unfinished": 0,
+          "hit_probability": 0.08632,
+          "hit_probability_95_wilson": [
+            0.0838900788377155,
+            0.08881348166638107
+          ],
+          "eventual_probability_identification_interval": [
+            0.08632,
+            0.08632
+          ],
+          "mean_ending_eur_rounded": 8664.03,
+          "mean_rounds_rounded": 115.7,
+          "seed": 2026261069
+        },
+        {
+          "policy": "max_with_target_gap_3_boxes",
+          "sessions": 50000,
+          "hit": 4340,
+          "unplayable": 45660,
+          "unfinished": 0,
+          "hit_probability": 0.0868,
+          "hit_probability_95_wilson": [
+            0.08436385706410472,
+            0.0892996296896487
+          ],
+          "eventual_probability_identification_interval": [
+            0.0868,
+            0.0868
+          ],
+          "mean_ending_eur_rounded": 8766.46,
+          "mean_rounds_rounded": 28.2,
+          "seed": 2027261072
+        }
+      ]
+    },
+    {
+      "dealer": "ahc",
+      "double_after_split": true,
+      "job_id": 117749794142,
+      "results": [
+        {
+          "policy": "flat_1000_one_box",
+          "sessions": 50000,
+          "hit": 4315,
+          "unplayable": 45657,
+          "unfinished": 28,
+          "hit_probability": 0.0863,
+          "hit_probability_95_wilson": [
+            0.08387033857158235,
+            0.0887932250054452
+          ],
+          "eventual_probability_identification_interval": [
+            0.0863,
+            0.08686
+          ],
+          "mean_ending_eur_rounded": 8689.34,
+          "mean_rounds_rounded": 674.3,
+          "seed": 2020261051
+        },
+        {
+          "policy": "flat_2500_one_box",
+          "sessions": 50000,
+          "hit": 4487,
+          "unplayable": 45513,
+          "unfinished": 0,
+          "hit_probability": 0.08974,
+          "hit_probability_95_wilson": [
+            0.0872662359771786,
+            0.09227679905572285
+          ],
+          "eventual_probability_identification_interval": [
+            0.08974,
+            0.08974
+          ],
+          "mean_ending_eur_rounded": 9060.17,
+          "mean_rounds_rounded": 111.6,
+          "seed": 2021261054
+        },
+        {
+          "policy": "flat_2500_three_boxes",
+          "sessions": 50000,
+          "hit": 4373,
+          "unplayable": 45627,
+          "unfinished": 0,
+          "hit_probability": 0.08746,
+          "hit_probability_95_wilson": [
+            0.08501533901751156,
+            0.08996804632951998
+          ],
+          "eventual_probability_identification_interval": [
+            0.08746,
+            0.08746
+          ],
+          "mean_ending_eur_rounded": 9037.72,
+          "mean_rounds_rounded": 27.7,
+          "seed": 2022261057
+        },
+        {
+          "policy": "fraction_5_percent_one_box",
+          "sessions": 50000,
+          "hit": 4235,
+          "unplayable": 45520,
+          "unfinished": 245,
+          "hit_probability": 0.0847,
+          "hit_probability_95_wilson": [
+            0.08229124656756104,
+            0.08717256284394378
+          ],
+          "eventual_probability_identification_interval": [
+            0.0847,
+            0.0896
+          ],
+          "mean_ending_eur_rounded": 8549.72,
+          "mean_rounds_rounded": 2579.8,
+          "seed": 2023261060
+        },
+        {
+          "policy": "fraction_10_percent_one_box",
+          "sessions": 50000,
+          "hit": 4636,
+          "unplayable": 45364,
+          "unfinished": 0,
+          "hit_probability": 0.09272,
+          "hit_probability_95_wilson": [
+            0.09020893074257463,
+            0.0952936464236129
+          ],
+          "eventual_probability_identification_interval": [
+            0.09272,
+            0.09272
+          ],
+          "mean_ending_eur_rounded": 9335.31,
+          "mean_rounds_rounded": 783.6,
+          "seed": 2024261063
+        },
+        {
+          "policy": "fraction_25_percent_one_box",
+          "sessions": 50000,
+          "hit": 4636,
+          "unplayable": 45364,
+          "unfinished": 0,
+          "hit_probability": 0.09272,
+          "hit_probability_95_wilson": [
+            0.09020893074257463,
+            0.0952936464236129
+          ],
+          "eventual_probability_identification_interval": [
+            0.09272,
+            0.09272
+          ],
+          "mean_ending_eur_rounded": 9329.46,
+          "mean_rounds_rounded": 211.2,
+          "seed": 2025261066
+        },
+        {
+          "policy": "max_with_target_gap_1_boxes",
+          "sessions": 50000,
+          "hit": 4722,
+          "unplayable": 45278,
+          "unfinished": 0,
+          "hit_probability": 0.09444,
+          "hit_probability_95_wilson": [
+            0.09190776404832984,
+            0.09703454884579463
+          ],
+          "eventual_probability_identification_interval": [
+            0.09444,
+            0.09444
+          ],
+          "mean_ending_eur_rounded": 9489.95,
+          "mean_rounds_rounded": 113,
+          "seed": 2026261069
+        },
+        {
+          "policy": "max_with_target_gap_3_boxes",
+          "sessions": 50000,
+          "hit": 4508,
+          "unplayable": 45492,
+          "unfinished": 0,
+          "hit_probability": 0.09016,
+          "hit_probability_95_wilson": [
+            0.08768092859519505,
+            0.09270204190615614
+          ],
+          "eventual_probability_identification_interval": [
+            0.09016,
+            0.09016
+          ],
+          "mean_ending_eur_rounded": 9115.96,
+          "mean_rounds_rounded": 27.3,
+          "seed": 2027261072
+        }
+      ]
+    },
+    {
+      "dealer": "enhc",
+      "double_after_split": true,
+      "job_id": 117749794292,
+      "results": [
+        {
+          "policy": "flat_1000_one_box",
+          "sessions": 50000,
+          "hit": 3907,
+          "unplayable": 46054,
+          "unfinished": 39,
+          "hit_probability": 0.07814,
+          "hit_probability_95_wilson": [
+            0.0758197614686112,
+            0.08052505586425042
+          ],
+          "eventual_probability_identification_interval": [
+            0.07814,
+            0.07892
+          ],
+          "mean_ending_eur_rounded": 7887.45,
+          "mean_rounds_rounded": 684.2,
+          "seed": 2020261051
+        },
+        {
+          "policy": "flat_2500_one_box",
+          "sessions": 50000,
+          "hit": 4402,
+          "unplayable": 45598,
+          "unfinished": 0,
+          "hit_probability": 0.08804,
+          "hit_probability_95_wilson": [
+            0.08558788841241677,
+            0.09055540781961677
+          ],
+          "eventual_probability_identification_interval": [
+            0.08804,
+            0.08804
+          ],
+          "mean_ending_eur_rounded": 8889.05,
+          "mean_rounds_rounded": 112.9,
+          "seed": 2021261054
+        },
+        {
+          "policy": "flat_2500_three_boxes",
+          "sessions": 50000,
+          "hit": 4424,
+          "unplayable": 45576,
+          "unfinished": 0,
+          "hit_probability": 0.08848,
+          "hit_probability_95_wilson": [
+            0.08602225785157067,
+            0.09100097077598163
+          ],
+          "eventual_probability_identification_interval": [
+            0.08848,
+            0.08848
+          ],
+          "mean_ending_eur_rounded": 9137,
+          "mean_rounds_rounded": 28.1,
+          "seed": 2022261057
+        },
+        {
+          "policy": "fraction_5_percent_one_box",
+          "sessions": 50000,
+          "hit": 3982,
+          "unplayable": 45751,
+          "unfinished": 267,
+          "hit_probability": 0.07964,
+          "hit_probability_95_wilson": [
+            0.0772991110684481,
+            0.08204547579459108
+          ],
+          "eventual_probability_identification_interval": [
+            0.07964,
+            0.08498
+          ],
+          "mean_ending_eur_rounded": 8036.98,
+          "mean_rounds_rounded": 2601.8,
+          "seed": 2023261060
+        },
+        {
+          "policy": "fraction_10_percent_one_box",
+          "sessions": 50000,
+          "hit": 4417,
+          "unplayable": 45583,
+          "unfinished": 0,
+          "hit_probability": 0.08834,
+          "hit_probability_95_wilson": [
+            0.08588404737929566,
+            0.09085920275877339
+          ],
+          "eventual_probability_identification_interval": [
+            0.08834,
+            0.08834
+          ],
+          "mean_ending_eur_rounded": 8889.74,
+          "mean_rounds_rounded": 803.8,
+          "seed": 2024261063
+        },
+        {
+          "policy": "fraction_25_percent_one_box",
+          "sessions": 50000,
+          "hit": 4637,
+          "unplayable": 45363,
+          "unfinished": 0,
+          "hit_probability": 0.09274,
+          "hit_probability_95_wilson": [
+            0.09022868310466284,
+            0.09531389098859375
+          ],
+          "eventual_probability_identification_interval": [
+            0.09274,
+            0.09274
+          ],
+          "mean_ending_eur_rounded": 9330.49,
+          "mean_rounds_rounded": 217.3,
+          "seed": 2025261066
+        },
+        {
+          "policy": "max_with_target_gap_1_boxes",
+          "sessions": 50000,
+          "hit": 4423,
+          "unplayable": 45577,
+          "unfinished": 0,
+          "hit_probability": 0.08846,
+          "hit_probability_95_wilson": [
+            0.08600251338352902,
+            0.09098071831695423
+          ],
+          "eventual_probability_identification_interval": [
+            0.08846,
+            0.08846
+          ],
+          "mean_ending_eur_rounded": 8886.32,
+          "mean_rounds_rounded": 113.8,
+          "seed": 2026261069
+        },
+        {
+          "policy": "max_with_target_gap_3_boxes",
+          "sessions": 50000,
+          "hit": 4341,
+          "unplayable": 45659,
+          "unfinished": 0,
+          "hit_probability": 0.08682,
+          "hit_probability_95_wilson": [
+            0.08438359831549816,
+            0.08931988536532429
+          ],
+          "eventual_probability_identification_interval": [
+            0.08682,
+            0.08682
+          ],
+          "mean_ending_eur_rounded": 8778.76,
+          "mean_rounds_rounded": 27.6,
+          "seed": 2027261072
+        }
+      ]
+    }
+  ],
+  "eventual_identification_bounds_note": "Bounds treat unfinished sampled sessions as all failures or all eventual successes; they do not include Monte Carlo uncertainty."
+}
